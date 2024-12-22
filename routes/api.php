@@ -3,6 +3,7 @@
 use App\Http\Controllers\EmailVerificationController;
 use App\Http\Controllers\PasswordResetController;
 use App\Http\Controllers\UserAuthController;
+use App\Http\Controllers\UserProfileController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -29,3 +30,7 @@ Route::post('/admin/register', function (Request $request) {});
 
 Route::post('/profile/user', function (Request $request) {});
 Route::post('/profile/admin', function (Request $request) {});
+
+Route::middleware(['auth:sanctum'])->group(function () {
+    Route::post('/profile/update', [UserProfileController::class, 'update']);
+});
