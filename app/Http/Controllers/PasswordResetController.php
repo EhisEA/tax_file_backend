@@ -16,12 +16,13 @@ use Illuminate\Validation\Rules\Password;
 
 class PasswordResetController extends Controller
 {
+    /** @unauthenticated */
     public function sendPasswordResetEmail(Request $request): JsonResponse
     {
         $request->validate(['email' => ['required', 'email']]);
         $email = $request->string('email');
 
-        $user = User::query()->where('email', $email)->first();
+        $user = User::query()->where('email', $email)->sole();
 
         $code = VerificationCode::query()->create([
             'code' => mt_rand(1000, 9999),
@@ -38,6 +39,7 @@ class PasswordResetController extends Controller
         ]);
     }
 
+    /** @unauthenticated */
     public function verifyPasswordResetCode(Request $request): JsonResponse
     {
         $request->validate([

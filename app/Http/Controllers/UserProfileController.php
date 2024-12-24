@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Http\Requests\CreateUserProfileRequest;
 use App\Http\Requests\UpdateUserProfileRequest;
 use App\Models\User;
-use Exception;
 use Illuminate\Http\JsonResponse;
 
 class UserProfileController extends Controller
@@ -22,31 +21,25 @@ class UserProfileController extends Controller
         return response()->json([
             'message' => 'user profile created successfully',
             'data' => [
-                'user' => $user
-            ]
+                'user' => $user,
+            ],
         ]);
     }
 
-    public function update(UpdateUserProfileRequest $request)
+    public function update(UpdateUserProfileRequest $request): JsonResponse
     {
-        try{
-            $user = $request->user();
-            $data = $request->validated();
+        /* @var User $user */
+        $user = $request->user();
+        $data = $request->validated();
 
-            $user->profile()->update($data);
-            $user->load(['profile']);
+        $user->profile()->update($data);
+        $user->load(['profile']);
 
-            return response()->json([
-                'message' => 'user profile updated successfully',
-                'data' => [
-                    'user' => $user
-                ]
-            ]);
-        } catch (Exception $e) {
-            return response()->json([
-                'message' => 'An error occurred while updating the user profile.',
-                'error' => $e->getMessage(),
-            ], 500);
-        }
+        return response()->json([
+            'message' => 'user profile updated successfully',
+            'data' => [
+                'user' => $user,
+            ],
+        ]);
     }
 }

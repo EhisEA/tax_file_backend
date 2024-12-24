@@ -1,0 +1,503 @@
+openapi: 3.0.3
+info:
+  title: 'tax file backend docs'
+  description: documentation
+  version: 1.0.0
+servers:
+  -
+    url: 'https://calm-spontaneity-production.up.railway.app'
+paths:
+  /api/user:
+    get:
+      summary: ''
+      operationId: getApiUser
+      description: ''
+      parameters: []
+      responses:
+        401:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: Unauthenticated.
+                properties:
+                  message:
+                    type: string
+                    example: Unauthenticated.
+      tags:
+        - Endpoints
+  /api/auth/password-reset:
+    post:
+      summary: ''
+      operationId: postApiAuthPasswordReset
+      description: ''
+      parameters: []
+      responses: {  }
+      tags:
+        - Endpoints
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  description: 'Must be a valid email address.'
+                  example: alvena06@example.org
+                  nullable: false
+              required:
+                - email
+      security: []
+  /api/auth/password-reset/verify:
+    post:
+      summary: ''
+      operationId: postApiAuthPasswordResetVerify
+      description: ''
+      parameters: []
+      responses: {  }
+      tags:
+        - Endpoints
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                code:
+                  type: string
+                  description: ''
+                  example: voluptas
+                  nullable: false
+                email:
+                  type: string
+                  description: 'Must be a valid email address.'
+                  example: tillman.sandra@example.org
+                  nullable: false
+                password:
+                  type: string
+                  description: ''
+                  example: id
+                  nullable: false
+              required:
+                - code
+                - email
+                - password
+      security: []
+  /api/auth/verify:
+    post:
+      summary: ''
+      operationId: postApiAuthVerify
+      description: ''
+      parameters: []
+      responses: {  }
+      tags:
+        - Endpoints
+  /api/profile/user:
+    post:
+      summary: ''
+      operationId: postApiProfileUser
+      description: ''
+      parameters: []
+      responses: {  }
+      tags:
+        - Endpoints
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                first_name:
+                  type: string
+                  description: ''
+                  example: corporis
+                  nullable: false
+                middle_name:
+                  type: string
+                  description: ''
+                  example: molestias
+                  nullable: true
+                last_name:
+                  type: string
+                  description: ''
+                  example: eius
+                  nullable: false
+                date_of_birth:
+                  type: string
+                  description: 'Must be a valid date. Must be a date before <code>2007-01-01 00:00:00</code>.'
+                  example: '2001-11-24'
+                  nullable: false
+                social_insurance_number:
+                  type: string
+                  description: 'Must match the regex /^\d{3}-\d{3}-\d{3}$/.'
+                  example: 562-859-389
+                  nullable: false
+                gender:
+                  type: string
+                  description: ''
+                  example: female
+                  nullable: false
+                  enum:
+                    - male
+                    - female
+                    - unspecified
+                marital_status:
+                  type: string
+                  description: ''
+                  example: single
+                  nullable: false
+                  enum:
+                    - married
+                    - single
+                occupation:
+                  type: string
+                  description: ''
+                  example: numquam
+                  nullable: false
+                preferred_language:
+                  type: string
+                  description: ''
+                  example: ut
+                  nullable: false
+                care_of:
+                  type: string
+                  description: ''
+                  example: velit
+                  nullable: false
+                rural_route_address:
+                  type: string
+                  description: ''
+                  example: quis
+                  nullable: false
+                mailing_street_address:
+                  type: string
+                  description: ''
+                  example: quisquam
+                  nullable: false
+                mailing_unit:
+                  type: string
+                  description: ''
+                  example: ad
+                  nullable: false
+                mailing_po_box:
+                  type: string
+                  description: ''
+                  example: tempore
+                  nullable: false
+                mailing_postal_code:
+                  type: string
+                  description: ''
+                  example: natus
+                  nullable: false
+                mailing_city:
+                  type: string
+                  description: ''
+                  example: nihil
+                  nullable: false
+                mailing_province:
+                  type: string
+                  description: ''
+                  example: dolorem
+                  nullable: false
+                residential_street_address:
+                  type: string
+                  description: ''
+                  example: culpa
+                  nullable: false
+                residential_unit:
+                  type: string
+                  description: ''
+                  example: consequuntur
+                  nullable: false
+                residential_city:
+                  type: string
+                  description: ''
+                  example: sunt
+                  nullable: false
+                residential_province:
+                  type: string
+                  description: ''
+                  example: porro
+                  nullable: false
+                residential_postal_code:
+                  type: string
+                  description: ''
+                  example: dolores
+                  nullable: false
+  /api/profile/update:
+    post:
+      summary: ''
+      operationId: postApiProfileUpdate
+      description: ''
+      parameters: []
+      responses: {  }
+      tags:
+        - Endpoints
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                first_name:
+                  type: string
+                  description: ''
+                  example: quisquam
+                  nullable: true
+                middle_name:
+                  type: string
+                  description: ''
+                  example: porro
+                  nullable: true
+                last_name:
+                  type: string
+                  description: ''
+                  example: et
+                  nullable: true
+                date_of_birth:
+                  type: string
+                  description: 'Must be a valid date. Must be a date before <code>2007-01-01 00:00:00</code>.'
+                  example: '2006-10-23'
+                  nullable: true
+                social_insurance_number:
+                  type: string
+                  description: 'Must match the regex /^\d{3}-\d{3}-\d{3}$/.'
+                  example: 355-561-090
+                  nullable: true
+                gender:
+                  type: string
+                  description: ''
+                  example: male
+                  nullable: true
+                  enum:
+                    - male
+                    - female
+                    - unspecified
+                marital_status:
+                  type: string
+                  description: ''
+                  example: married
+                  nullable: true
+                  enum:
+                    - married
+                    - single
+                occupation:
+                  type: string
+                  description: ''
+                  example: quaerat
+                  nullable: true
+                preferred_language:
+                  type: string
+                  description: ''
+                  example: magni
+                  nullable: true
+                care_of:
+                  type: string
+                  description: ''
+                  example: hic
+                  nullable: true
+                rural_route_address:
+                  type: string
+                  description: ''
+                  example: nihil
+                  nullable: true
+                mailing_street_address:
+                  type: string
+                  description: ''
+                  example: officiis
+                  nullable: true
+                mailing_unit:
+                  type: string
+                  description: ''
+                  example: qui
+                  nullable: true
+                mailing_po_box:
+                  type: string
+                  description: ''
+                  example: rerum
+                  nullable: true
+                mailing_postal_code:
+                  type: string
+                  description: ''
+                  example: dignissimos
+                  nullable: true
+                mailing_city:
+                  type: string
+                  description: ''
+                  example: exercitationem
+                  nullable: true
+                mailing_province:
+                  type: string
+                  description: ''
+                  example: similique
+                  nullable: true
+                residential_street_address:
+                  type: string
+                  description: ''
+                  example: placeat
+                  nullable: true
+                residential_unit:
+                  type: string
+                  description: ''
+                  example: ab
+                  nullable: true
+                residential_city:
+                  type: string
+                  description: ''
+                  example: velit
+                  nullable: true
+                residential_province:
+                  type: string
+                  description: ''
+                  example: natus
+                  nullable: true
+                residential_postal_code:
+                  type: string
+                  description: ''
+                  example: maiores
+                  nullable: true
+  /api/auth/register:
+    post:
+      summary: 'Register User'
+      operationId: registerUser
+      description: 'Create and register a user account'
+      parameters: []
+      responses:
+        200:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  data:
+                    name: 'Lela Wunsch'
+                    email: alessandra87@example.net
+                    email_verified_at: '2024-12-24T02:31:41.000000Z'
+                  token: xxxxxx
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                        example: 'Lela Wunsch'
+                      email:
+                        type: string
+                        example: alessandra87@example.net
+                      email_verified_at:
+                        type: string
+                        example: '2024-12-24T02:31:41.000000Z'
+                  token:
+                    type: string
+                    example: xxxxxx
+      tags:
+        - 'User Authentication'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  description: 'Must be a valid email address.'
+                  example: stone.adams@example.org
+                  nullable: false
+                phone_number:
+                  type: string
+                  description: "User's phone number."
+                  example: '08123456789'
+                  nullable: false
+                password:
+                  type: string
+                  description: 'Super secure password.'
+                  example: superSecurePassword1234
+                  nullable: false
+              required:
+                - email
+                - phone_number
+                - password
+      security: []
+  /api/auth/login:
+    post:
+      summary: 'Login User'
+      operationId: loginUser
+      description: 'Login to a user account'
+      parameters: []
+      responses:
+        200:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  data:
+                    name: 'Hipolito Labadie'
+                    email: koch.elsa@example.net
+                    email_verified_at: '2024-12-24T02:31:41.000000Z'
+                  token: xxxxxx
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                        example: 'Hipolito Labadie'
+                      email:
+                        type: string
+                        example: koch.elsa@example.net
+                      email_verified_at:
+                        type: string
+                        example: '2024-12-24T02:31:41.000000Z'
+                  token:
+                    type: string
+                    example: xxxxxx
+      tags:
+        - 'User Authentication'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  description: 'Must be a valid email address.'
+                  example: owindler@example.net
+                  nullable: false
+                password:
+                  type: string
+                  description: "User's password."
+                  example: superSecurePassword1234
+                  nullable: false
+              required:
+                - email
+                - password
+      security: []
+tags:
+  -
+    name: Endpoints
+    description: ''
+  -
+    name: 'User Authentication'
+    description: "\nApi for registering and logging in user accounts"
+components:
+  securitySchemes:
+    default:
+      type: http
+      scheme: bearer
+      description: 'You can retrieve your token by visiting your dashboard and clicking <b>Generate API token</b>.'
+security:
+  -
+    default: []
