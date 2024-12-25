@@ -4,42 +4,54 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\CreateUserProfileRequest;
 use App\Http\Requests\UpdateUserProfileRequest;
+use App\Http\Resources\UserResource;
 use App\Models\User;
+use App\Models\UserProfile;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Log;
 
+/**
+ * @group User Profile
+ *
+ * Apis for managing user profile data
+ */
 class UserProfileController extends Controller
 {
-    public function store(CreateUserProfileRequest $request): JsonResponse
+    /**
+     * Create Profile
+     *
+     * Create user profile
+     * @apiResource App\Http\Resources\UserResource
+     * @apiResourceModel App\Models\User
+     */
+    public function store(CreateUserProfileRequest $request): UserResource
     {
         /* @var User $user */
         $user = $request->user();
         $data = $request->validated();
 
-        $profile = $user->profile()->create($data);
-        $user->load(['profile']);
+        $profile = UserProfile::query()->create($data);
+        $profile->user()->save($user);
 
-        return response()->json([
-            'message' => 'user profile created successfully',
-            'data' => [
-                'user' => $user,
-            ],
-        ]);
+        return new UserResource($user);
     }
 
-    public function update(UpdateUserProfileRequest $request): JsonResponse
+    /**
+     * Update Profile
+     *
+     * Update user profile
+     * @apiResource App\Http\Resources\UserResource
+     * @apiResourceModel App\Models\User
+     */
+    public function update(UpdateUserProfileRequest $request): UserResource
     {
         /* @var User $user */
         $user = $request->user();
         $data = $request->validated();
 
         $user->profile()->update($data);
-        $user->load(['profile']);
+        $user->refresh();
 
-        return response()->json([
-            'message' => 'user profile updated successfully',
-            'data' => [
-                'user' => $user,
-            ],
-        ]);
+        return new UserResource($user);
     }
 }

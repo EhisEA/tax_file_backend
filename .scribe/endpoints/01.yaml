@@ -1,7 +1,7 @@
 name: 'User Authentication'
 description: |-
 
-  Api for registering and logging in user accounts
+  Apis for registering and logging in user accounts
 endpoints:
   -
     httpMethods:
@@ -11,7 +11,7 @@ endpoints:
       groupName: 'User Authentication'
       groupDescription: |-
 
-        Api for registering and logging in user accounts
+        Apis for registering and logging in user accounts
       subgroup: ''
       subgroupDescription: ''
       title: 'Register User'
@@ -30,7 +30,7 @@ endpoints:
         name: email
         description: 'Must be a valid email address.'
         required: true
-        example: stone.adams@example.org
+        example: rosalyn.lind@example.com
         type: string
         enumValues: []
         exampleWasSpecified: false
@@ -56,15 +56,26 @@ endpoints:
         exampleWasSpecified: false
         nullable: false
         custom: []
+      password_confirmation:
+        name: password_confirmation
+        description: 'confirm password.'
+        required: false
+        example: superSecurePassword1234
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
     cleanBodyParameters:
-      email: stone.adams@example.org
+      email: rosalyn.lind@example.com
       phone_number: '08123456789'
       password: superSecurePassword1234
+      password_confirmation: superSecurePassword1234
     fileParameters: []
     responses:
       -
         status: 200
-        content: '{"data":{"name":"Lela Wunsch","email":"alessandra87@example.net","email_verified_at":"2024-12-24T02:31:41.000000Z"},"token":"xxxxxx"}'
+        content: '{"data":{"id":1,"email":"local_test@example.org","phone_number":"08123456789","profile":{"first_name":"Peter","middle_name":"Benjamin","last_name":"Parker","date_of_birth":"2006-07-03 00:00:00","social_insurance_number":"497-449-730","gender":"male","marital_status":"single","occupation":"Carpenter","preferred_language":"English","care_of":"perferendis","rural_route_address":"nisi","mailing_street_address":"123 Heavens Gate","mailing_unit":"Unit 69","mailing_po_box":"PO Box 123456","mailing_postal_code":"A1A 1A1","mailing_city":"Toronto","mailing_province":"Ontario","residential_street_address":"123 Heavens Gate","residential_unit":"Unit 69","residential_city":"Toronto","residential_province":"Ontario","residential_postal_code":"A1A 1A1"}},"token":"xxxxxx"}'
         headers: []
         description: ''
         custom: []
@@ -82,7 +93,7 @@ endpoints:
       groupName: 'User Authentication'
       groupDescription: |-
 
-        Api for registering and logging in user accounts
+        Apis for registering and logging in user accounts
       subgroup: ''
       subgroupDescription: ''
       title: 'Login User'
@@ -101,7 +112,7 @@ endpoints:
         name: email
         description: 'Must be a valid email address.'
         required: true
-        example: owindler@example.net
+        example: aleen20@example.com
         type: string
         enumValues: []
         exampleWasSpecified: false
@@ -118,13 +129,13 @@ endpoints:
         nullable: false
         custom: []
     cleanBodyParameters:
-      email: owindler@example.net
+      email: aleen20@example.com
       password: superSecurePassword1234
     fileParameters: []
     responses:
       -
         status: 200
-        content: '{"data":{"name":"Hipolito Labadie","email":"koch.elsa@example.net","email_verified_at":"2024-12-24T02:31:41.000000Z"},"token":"xxxxxx"}'
+        content: '{"data":{"id":1,"email":"local_test@example.org","phone_number":"08123456789","profile":{"first_name":"Peter","middle_name":"Benjamin","last_name":"Parker","date_of_birth":"2006-07-03 00:00:00","social_insurance_number":"497-449-730","gender":"male","marital_status":"single","occupation":"Carpenter","preferred_language":"English","care_of":"perferendis","rural_route_address":"nisi","mailing_street_address":"123 Heavens Gate","mailing_unit":"Unit 69","mailing_po_box":"PO Box 123456","mailing_postal_code":"A1A 1A1","mailing_city":"Toronto","mailing_province":"Ontario","residential_street_address":"123 Heavens Gate","residential_unit":"Unit 69","residential_city":"Toronto","residential_province":"Ontario","residential_postal_code":"A1A 1A1"}},"token":"xxxxxx"}'
         headers: []
         description: ''
         custom: []

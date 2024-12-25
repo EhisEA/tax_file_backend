@@ -10,11 +10,58 @@
     ],
     "info": {
         "name": "tax file backend docs",
-        "_postman_id": "89acfa18-1198-4427-a9a0-82363a31cd79",
+        "_postman_id": "8cb849ea-1dec-4878-80e5-140f940be190",
         "description": "documentation",
         "schema": "https:\/\/schema.getpostman.com\/json\/collection\/v2.1.0\/collection.json"
     },
     "item": [
+        {
+            "name": "Email verification",
+            "description": "\nApi for verifying email",
+            "item": [
+                {
+                    "name": "Verify Email",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/auth\/verify",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/auth\/verify"
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\"code\":\"1234\"}"
+                        },
+                        "description": "Verify email by code"
+                    },
+                    "response": [
+                        {
+                            "header": [],
+                            "code": 200,
+                            "body": "{\"data\":{\"id\":1,\"email\":\"local_test@example.org\",\"phone_number\":\"08123456789\",\"profile\":{\"first_name\":\"Peter\",\"middle_name\":\"Benjamin\",\"last_name\":\"Parker\",\"date_of_birth\":\"2006-07-03 00:00:00\",\"social_insurance_number\":\"497-449-730\",\"gender\":\"male\",\"marital_status\":\"single\",\"occupation\":\"Carpenter\",\"preferred_language\":\"English\",\"care_of\":\"perferendis\",\"rural_route_address\":\"nisi\",\"mailing_street_address\":\"123 Heavens Gate\",\"mailing_unit\":\"Unit 69\",\"mailing_po_box\":\"PO Box 123456\",\"mailing_postal_code\":\"A1A 1A1\",\"mailing_city\":\"Toronto\",\"mailing_province\":\"Ontario\",\"residential_street_address\":\"123 Heavens Gate\",\"residential_unit\":\"Unit 69\",\"residential_city\":\"Toronto\",\"residential_province\":\"Ontario\",\"residential_postal_code\":\"A1A 1A1\"}}}",
+                            "name": ""
+                        },
+                        {
+                            "header": [],
+                            "code": 422,
+                            "body": "{\n    \"message\": \"invalid verification code\",\n    \"data\": null,\n}",
+                            "name": ""
+                        }
+                    ]
+                }
+            ]
+        },
         {
             "name": "Endpoints",
             "description": "",
@@ -63,9 +110,15 @@
                             "name": ""
                         }
                     ]
-                },
+                }
+            ]
+        },
+        {
+            "name": "Password Reset",
+            "description": "\nApis for resetting forgotten passwords",
+            "item": [
                 {
-                    "name": "POST api\/auth\/password-reset",
+                    "name": "Send password reset email",
                     "request": {
                         "url": {
                             "host": "{{baseUrl}}",
@@ -86,17 +139,24 @@
                         ],
                         "body": {
                             "mode": "raw",
-                            "raw": "{\"email\":\"alvena06@example.org\"}"
+                            "raw": "{\"email\":\"dubuque.clemens@example.com\"}"
                         },
-                        "description": "",
+                        "description": "Send an email with password reset otp",
                         "auth": {
                             "type": "noauth"
                         }
                     },
-                    "response": []
+                    "response": [
+                        {
+                            "header": [],
+                            "code": 200,
+                            "body": "{\n    \"message\": \"password reset code sent successfully\",\n    \"data\": null\n}",
+                            "name": ""
+                        }
+                    ]
                 },
                 {
-                    "name": "POST api\/auth\/password-reset\/verify",
+                    "name": "Verify password reset",
                     "request": {
                         "url": {
                             "host": "{{baseUrl}}",
@@ -117,101 +177,27 @@
                         ],
                         "body": {
                             "mode": "raw",
-                            "raw": "{\"code\":\"voluptas\",\"email\":\"tillman.sandra@example.org\",\"password\":\"id\"}"
+                            "raw": "{\"code\":\"1234\",\"email\":\"roberta26@example.com\",\"password\":\"superSecurePassword1234\",\"password_confirmation\":\"superSecurePassword1234\"}"
                         },
-                        "description": "",
+                        "description": "Verify password reset email by OTP",
                         "auth": {
                             "type": "noauth"
                         }
                     },
-                    "response": []
-                },
-                {
-                    "name": "POST api\/auth\/verify",
-                    "request": {
-                        "url": {
-                            "host": "{{baseUrl}}",
-                            "path": "api\/auth\/verify",
-                            "query": [],
-                            "raw": "{{baseUrl}}\/api\/auth\/verify"
-                        },
-                        "method": "POST",
-                        "header": [
-                            {
-                                "key": "Content-Type",
-                                "value": "application\/json"
-                            },
-                            {
-                                "key": "Accept",
-                                "value": "application\/json"
-                            }
-                        ],
-                        "body": null,
-                        "description": ""
-                    },
-                    "response": []
-                },
-                {
-                    "name": "POST api\/profile\/user",
-                    "request": {
-                        "url": {
-                            "host": "{{baseUrl}}",
-                            "path": "api\/profile\/user",
-                            "query": [],
-                            "raw": "{{baseUrl}}\/api\/profile\/user"
-                        },
-                        "method": "POST",
-                        "header": [
-                            {
-                                "key": "Content-Type",
-                                "value": "application\/json"
-                            },
-                            {
-                                "key": "Accept",
-                                "value": "application\/json"
-                            }
-                        ],
-                        "body": {
-                            "mode": "raw",
-                            "raw": "{\"first_name\":\"corporis\",\"middle_name\":\"molestias\",\"last_name\":\"eius\",\"date_of_birth\":\"2001-11-24\",\"social_insurance_number\":\"562-859-389\",\"gender\":\"female\",\"marital_status\":\"single\",\"occupation\":\"numquam\",\"preferred_language\":\"ut\",\"care_of\":\"velit\",\"rural_route_address\":\"quis\",\"mailing_street_address\":\"quisquam\",\"mailing_unit\":\"ad\",\"mailing_po_box\":\"tempore\",\"mailing_postal_code\":\"natus\",\"mailing_city\":\"nihil\",\"mailing_province\":\"dolorem\",\"residential_street_address\":\"culpa\",\"residential_unit\":\"consequuntur\",\"residential_city\":\"sunt\",\"residential_province\":\"porro\",\"residential_postal_code\":\"dolores\"}"
-                        },
-                        "description": ""
-                    },
-                    "response": []
-                },
-                {
-                    "name": "POST api\/profile\/update",
-                    "request": {
-                        "url": {
-                            "host": "{{baseUrl}}",
-                            "path": "api\/profile\/update",
-                            "query": [],
-                            "raw": "{{baseUrl}}\/api\/profile\/update"
-                        },
-                        "method": "POST",
-                        "header": [
-                            {
-                                "key": "Content-Type",
-                                "value": "application\/json"
-                            },
-                            {
-                                "key": "Accept",
-                                "value": "application\/json"
-                            }
-                        ],
-                        "body": {
-                            "mode": "raw",
-                            "raw": "{\"first_name\":\"quisquam\",\"middle_name\":\"porro\",\"last_name\":\"et\",\"date_of_birth\":\"2006-10-23\",\"social_insurance_number\":\"355-561-090\",\"gender\":\"male\",\"marital_status\":\"married\",\"occupation\":\"quaerat\",\"preferred_language\":\"magni\",\"care_of\":\"hic\",\"rural_route_address\":\"nihil\",\"mailing_street_address\":\"officiis\",\"mailing_unit\":\"qui\",\"mailing_po_box\":\"rerum\",\"mailing_postal_code\":\"dignissimos\",\"mailing_city\":\"exercitationem\",\"mailing_province\":\"similique\",\"residential_street_address\":\"placeat\",\"residential_unit\":\"ab\",\"residential_city\":\"velit\",\"residential_province\":\"natus\",\"residential_postal_code\":\"maiores\"}"
-                        },
-                        "description": ""
-                    },
-                    "response": []
+                    "response": [
+                        {
+                            "header": [],
+                            "code": 200,
+                            "body": "{\n    \"message\": \"password reset successfully\",\n    \"data\": null\n}",
+                            "name": ""
+                        }
+                    ]
                 }
             ]
         },
         {
             "name": "User Authentication",
-            "description": "\nApi for registering and logging in user accounts",
+            "description": "\nApis for registering and logging in user accounts",
             "item": [
                 {
                     "name": "Register User",
@@ -235,7 +221,7 @@
                         ],
                         "body": {
                             "mode": "raw",
-                            "raw": "{\"email\":\"stone.adams@example.org\",\"phone_number\":\"08123456789\",\"password\":\"superSecurePassword1234\"}"
+                            "raw": "{\"email\":\"rosalyn.lind@example.com\",\"phone_number\":\"08123456789\",\"password\":\"superSecurePassword1234\",\"password_confirmation\":\"superSecurePassword1234\"}"
                         },
                         "description": "Create and register a user account",
                         "auth": {
@@ -246,7 +232,7 @@
                         {
                             "header": [],
                             "code": 200,
-                            "body": "{\"data\":{\"name\":\"Lela Wunsch\",\"email\":\"alessandra87@example.net\",\"email_verified_at\":\"2024-12-24T02:31:41.000000Z\"},\"token\":\"xxxxxx\"}",
+                            "body": "{\"data\":{\"id\":1,\"email\":\"local_test@example.org\",\"phone_number\":\"08123456789\",\"profile\":{\"first_name\":\"Peter\",\"middle_name\":\"Benjamin\",\"last_name\":\"Parker\",\"date_of_birth\":\"2006-07-03 00:00:00\",\"social_insurance_number\":\"497-449-730\",\"gender\":\"male\",\"marital_status\":\"single\",\"occupation\":\"Carpenter\",\"preferred_language\":\"English\",\"care_of\":\"perferendis\",\"rural_route_address\":\"nisi\",\"mailing_street_address\":\"123 Heavens Gate\",\"mailing_unit\":\"Unit 69\",\"mailing_po_box\":\"PO Box 123456\",\"mailing_postal_code\":\"A1A 1A1\",\"mailing_city\":\"Toronto\",\"mailing_province\":\"Ontario\",\"residential_street_address\":\"123 Heavens Gate\",\"residential_unit\":\"Unit 69\",\"residential_city\":\"Toronto\",\"residential_province\":\"Ontario\",\"residential_postal_code\":\"A1A 1A1\"}},\"token\":\"xxxxxx\"}",
                             "name": ""
                         }
                     ]
@@ -273,7 +259,7 @@
                         ],
                         "body": {
                             "mode": "raw",
-                            "raw": "{\"email\":\"owindler@example.net\",\"password\":\"superSecurePassword1234\"}"
+                            "raw": "{\"email\":\"aleen20@example.com\",\"password\":\"superSecurePassword1234\"}"
                         },
                         "description": "Login to a user account",
                         "auth": {
@@ -284,7 +270,83 @@
                         {
                             "header": [],
                             "code": 200,
-                            "body": "{\"data\":{\"name\":\"Hipolito Labadie\",\"email\":\"koch.elsa@example.net\",\"email_verified_at\":\"2024-12-24T02:31:41.000000Z\"},\"token\":\"xxxxxx\"}",
+                            "body": "{\"data\":{\"id\":1,\"email\":\"local_test@example.org\",\"phone_number\":\"08123456789\",\"profile\":{\"first_name\":\"Peter\",\"middle_name\":\"Benjamin\",\"last_name\":\"Parker\",\"date_of_birth\":\"2006-07-03 00:00:00\",\"social_insurance_number\":\"497-449-730\",\"gender\":\"male\",\"marital_status\":\"single\",\"occupation\":\"Carpenter\",\"preferred_language\":\"English\",\"care_of\":\"perferendis\",\"rural_route_address\":\"nisi\",\"mailing_street_address\":\"123 Heavens Gate\",\"mailing_unit\":\"Unit 69\",\"mailing_po_box\":\"PO Box 123456\",\"mailing_postal_code\":\"A1A 1A1\",\"mailing_city\":\"Toronto\",\"mailing_province\":\"Ontario\",\"residential_street_address\":\"123 Heavens Gate\",\"residential_unit\":\"Unit 69\",\"residential_city\":\"Toronto\",\"residential_province\":\"Ontario\",\"residential_postal_code\":\"A1A 1A1\"}},\"token\":\"xxxxxx\"}",
+                            "name": ""
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "User Profile",
+            "description": "\nApis for managing user profile data",
+            "item": [
+                {
+                    "name": "Create Profile",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/profile\/user",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/profile\/user"
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\"first_name\":\"Peter\",\"middle_name\":\"Benjamin\",\"last_name\":\"Parker\",\"date_of_birth\":\"2000-08-25\",\"social_insurance_number\":\"564-679-288\",\"gender\":\"unspecified\",\"marital_status\":\"married\",\"occupation\":\"Carpenter\",\"preferred_language\":\"English\",\"care_of\":\"deserunt\",\"rural_route_address\":\"et\",\"mailing_street_address\":\"123 Heavens Gate\",\"mailing_unit\":\"Unit 69\",\"mailing_po_box\":\"PO Box 123456\",\"mailing_postal_code\":\"A1A 1A1\",\"mailing_city\":\"Toronto\",\"mailing_province\":\"Ontario\",\"residential_street_address\":\"123 Heavens Gate\",\"residential_unit\":\"Unit 69\",\"residential_city\":\"Toronto\",\"residential_province\":\"Ontario\",\"residential_postal_code\":\"A1A 1A1\"}"
+                        },
+                        "description": "Create user profile"
+                    },
+                    "response": [
+                        {
+                            "header": [],
+                            "code": 200,
+                            "body": "{\"data\":{\"id\":1,\"email\":\"local_test@example.org\",\"phone_number\":\"08123456789\",\"profile\":{\"first_name\":\"Peter\",\"middle_name\":\"Benjamin\",\"last_name\":\"Parker\",\"date_of_birth\":\"2006-07-03 00:00:00\",\"social_insurance_number\":\"497-449-730\",\"gender\":\"male\",\"marital_status\":\"single\",\"occupation\":\"Carpenter\",\"preferred_language\":\"English\",\"care_of\":\"perferendis\",\"rural_route_address\":\"nisi\",\"mailing_street_address\":\"123 Heavens Gate\",\"mailing_unit\":\"Unit 69\",\"mailing_po_box\":\"PO Box 123456\",\"mailing_postal_code\":\"A1A 1A1\",\"mailing_city\":\"Toronto\",\"mailing_province\":\"Ontario\",\"residential_street_address\":\"123 Heavens Gate\",\"residential_unit\":\"Unit 69\",\"residential_city\":\"Toronto\",\"residential_province\":\"Ontario\",\"residential_postal_code\":\"A1A 1A1\"}}}",
+                            "name": ""
+                        }
+                    ]
+                },
+                {
+                    "name": "Update Profile",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/profile\/update",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/profile\/update"
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\"first_name\":\"Peter\",\"middle_name\":\"Benjamin\",\"last_name\":\"Parker\",\"date_of_birth\":\"2000-09-12\",\"social_insurance_number\":\"208-816-103\",\"gender\":\"unspecified\",\"marital_status\":\"married\",\"occupation\":\"Carpenter\",\"preferred_language\":\"English\",\"care_of\":\"voluptatibus\",\"rural_route_address\":\"maiores\",\"mailing_street_address\":\"123 Heavens Gate\",\"mailing_unit\":\"Unit 69\",\"mailing_po_box\":\"PO Box 123456\",\"mailing_postal_code\":\"A1A 1A1\",\"mailing_city\":\"Toronto\",\"mailing_province\":\"Ontario\",\"residential_street_address\":\"123 Heavens Gate\",\"residential_unit\":\"Unit 69\",\"residential_city\":\"Toronto\",\"residential_province\":\"Ontario\",\"residential_postal_code\":\"A1A 1A1\"}"
+                        },
+                        "description": "Update user profile"
+                    },
+                    "response": [
+                        {
+                            "header": [],
+                            "code": 200,
+                            "body": "{\"data\":{\"id\":1,\"email\":\"local_test@example.org\",\"phone_number\":\"08123456789\",\"profile\":{\"first_name\":\"Peter\",\"middle_name\":\"Benjamin\",\"last_name\":\"Parker\",\"date_of_birth\":\"2006-07-03 00:00:00\",\"social_insurance_number\":\"497-449-730\",\"gender\":\"male\",\"marital_status\":\"single\",\"occupation\":\"Carpenter\",\"preferred_language\":\"English\",\"care_of\":\"perferendis\",\"rural_route_address\":\"nisi\",\"mailing_street_address\":\"123 Heavens Gate\",\"mailing_unit\":\"Unit 69\",\"mailing_po_box\":\"PO Box 123456\",\"mailing_postal_code\":\"A1A 1A1\",\"mailing_city\":\"Toronto\",\"mailing_province\":\"Ontario\",\"residential_street_address\":\"123 Heavens Gate\",\"residential_unit\":\"Unit 69\",\"residential_city\":\"Toronto\",\"residential_province\":\"Ontario\",\"residential_postal_code\":\"A1A 1A1\"}}}",
                             "name": ""
                         }
                     ]

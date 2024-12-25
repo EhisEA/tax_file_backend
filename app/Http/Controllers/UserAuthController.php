@@ -15,7 +15,7 @@ use Illuminate\Validation\Rules\Password;
 /**
  * @group User Authentication
  *
- * Api for registering and logging in user accounts
+ * Apis for registering and logging in user accounts
  *
  * @unauthenticated
  */
@@ -25,6 +25,8 @@ class UserAuthController extends Controller
      * Register User
      *
      * Create and register a user account
+     *
+     * @bodyParam password_confirmation string confirm password. Example: superSecurePassword1234
      * @apiResource App\Http\Resources\UserResource
      * @apiResourceModel App\Models\User
      * @apiResourceAdditional token=xxxxxx

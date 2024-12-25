@@ -14,15 +14,30 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Validation\Rules\Password;
 
+/**
+ * @group Password Reset
+ *
+ * Apis for resetting forgotten passwords
+ *
+ * @unauthenticated
+ */
 class PasswordResetController extends Controller
 {
-    /** @unauthenticated */
+    /**
+     * Send password reset email
+     *
+     * Send an email with password reset otp
+     *
+     * @response {
+     *     "message": "password reset code sent successfully",
+     *     "data": null
+     * }
+     */
     public function sendPasswordResetEmail(Request $request): JsonResponse
     {
-        $request->validate(['email' => ['required', 'email']]);
-        $email = $request->string('email');
+        $data = $request->validate(['email' => ['required', 'email']]);
 
-        $user = User::query()->where('email', $email)->sole();
+        $user = User::query()->where('email', $data['email'])->sole();
 
         $code = VerificationCode::query()->create([
             'code' => mt_rand(1000, 9999),
@@ -39,12 +54,24 @@ class PasswordResetController extends Controller
         ]);
     }
 
-    /** @unauthenticated */
+    /**
+     * Verify password reset
+     *
+     * Verify password reset email by OTP
+     *
+     * @bodyParam password_confirmation string confirm password. Example: superSecurePassword1234
+     * @response {
+     *     "message": "password reset successfully",
+     *     "data": null
+     * }
+     */
     public function verifyPasswordResetCode(Request $request): JsonResponse
     {
         $request->validate([
+            // Password reset verification code. Example: 1234
             'code' => ['required'],
             'email' => ['required', 'email'],
+            // Super secure password. Example: superSecurePassword1234
             'password' => ['required', 'confirmed', Password::min(8)]
         ]);
 

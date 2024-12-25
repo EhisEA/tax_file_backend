@@ -4,33 +4,32 @@ use App\Http\Controllers\EmailVerificationController;
 use App\Http\Controllers\PasswordResetController;
 use App\Http\Controllers\UserAuthController;
 use App\Http\Controllers\UserProfileController;
+use App\Http\Resources\UserResource;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/user', function (Request $request) {
-    return $request->user();
+    return new UserResource($request->user());
 })->middleware('auth:sanctum');
 
 Route::name('auth.')->group(function () {
-    Route::post('/auth/register', [UserAuthController::class, 'register'])->name('user.register');
-    Route::post('/auth/login', [UserAuthController::class, 'login'])->name('user.login');
+    Route::controller(UserAuthController::class)->name('user.')->group(function () {
+        Route::post('/auth/register', 'register')->name('register');
+        Route::post('/auth/login', 'login')->name('login');
+    });
 
-    Route::post('/auth/password-reset', [PasswordResetController::class, 'sendPasswordResetEmail'])
-        ->name('password.reset');
-
-    Route::post('/auth/password-reset/verify', [PasswordResetController::class, 'verifyPasswordResetCode'])
-        ->name('password.reset.verify');
+    Route::controller(PasswordResetController::class)->name('password.')->group(function () {
+        Route::post('/auth/password-reset', 'sendPasswordResetEmail')->name('password.reset');
+        Route::post('/auth/password-reset/verify', 'verifyPasswordResetCode')->name('password.reset.verify');
+    });
 
     Route::post('/auth/verify', EmailVerificationController::class)->name('verify')->middleware('auth:sanctum');
-
-    // TODO:
-    //    Route::post('/admin/login', function (Request $request) { });
-    //    Route::post('/admin/register', function (Request $request) { });
 });
 
+
 Route::middleware('auth:sanctum')->group(function () {
-    Route::name('user.profile.')->group(function () {
-        Route::post('/profile/user', [UserProfileController::class, 'store'])->name('store');
-        Route::post('/profile/update', [UserProfileController::class, 'update'])->name('update');
+    Route::controller(UserProfileController::class)->name('user.profile.')->group(function () {
+        Route::post('/profile/user', 'store')->name('store');
+        Route::post('/profile/update', 'update')->name('update');
     });
 });

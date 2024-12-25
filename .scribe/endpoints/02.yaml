@@ -1,0 +1,144 @@
+name: 'Password Reset'
+description: |-
+
+  Apis for resetting forgotten passwords
+endpoints:
+  -
+    httpMethods:
+      - POST
+    uri: api/auth/password-reset
+    metadata:
+      groupName: 'Password Reset'
+      groupDescription: |-
+
+        Apis for resetting forgotten passwords
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Send password reset email'
+      description: 'Send an email with password reset otp'
+      authenticated: false
+      custom: []
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters:
+      email:
+        name: email
+        description: 'Must be a valid email address.'
+        required: true
+        example: dubuque.clemens@example.com
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        custom: []
+    cleanBodyParameters:
+      email: dubuque.clemens@example.com
+    fileParameters: []
+    responses:
+      -
+        status: 200
+        content: |-
+          {
+              "message": "password reset code sent successfully",
+              "data": null
+          }
+        headers: []
+        description: ''
+        custom: []
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+    custom: []
+  -
+    httpMethods:
+      - POST
+    uri: api/auth/password-reset/verify
+    metadata:
+      groupName: 'Password Reset'
+      groupDescription: |-
+
+        Apis for resetting forgotten passwords
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Verify password reset'
+      description: 'Verify password reset email by OTP'
+      authenticated: false
+      custom: []
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters:
+      code:
+        name: code
+        description: 'Password reset verification code.'
+        required: true
+        example: '1234'
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        custom: []
+      email:
+        name: email
+        description: 'Must be a valid email address.'
+        required: true
+        example: roberta26@example.com
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        custom: []
+      password:
+        name: password
+        description: 'Super secure password.'
+        required: true
+        example: superSecurePassword1234
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        custom: []
+      password_confirmation:
+        name: password_confirmation
+        description: 'confirm password.'
+        required: false
+        example: superSecurePassword1234
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+    cleanBodyParameters:
+      code: '1234'
+      email: roberta26@example.com
+      password: superSecurePassword1234
+      password_confirmation: superSecurePassword1234
+    fileParameters: []
+    responses:
+      -
+        status: 200
+        content: |-
+          {
+              "message": "password reset successfully",
+              "data": null
+          }
+        headers: []
+        description: ''
+        custom: []
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+    custom: []

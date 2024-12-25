@@ -36,6 +36,8 @@ class User extends Authenticatable
         'remember_token',
     ];
 
+    protected $with = ['profile'];
+
     /**
      * Get the attributes that should be cast.
      *
@@ -52,5 +54,11 @@ class User extends Authenticatable
     public function profile(): MorphTo
     {
         return $this->morphTo('profileable');
+    }
+
+    // HACK: so thing's that rely on laravel's default naming conventions stop complaining
+    public function profileable(): MorphTo
+    {
+        return $this->morphTo();
     }
 }

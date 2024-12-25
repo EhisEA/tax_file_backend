@@ -7,6 +7,150 @@ servers:
   -
     url: 'https://calm-spontaneity-production.up.railway.app'
 paths:
+  /api/auth/verify:
+    post:
+      summary: 'Verify Email'
+      operationId: verifyEmail
+      description: 'Verify email by code'
+      parameters: []
+      responses:
+        200:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  data:
+                    id: 1
+                    email: local_test@example.org
+                    phone_number: '08123456789'
+                    profile:
+                      first_name: Peter
+                      middle_name: Benjamin
+                      last_name: Parker
+                      date_of_birth: '2006-07-03 00:00:00'
+                      social_insurance_number: 497-449-730
+                      gender: male
+                      marital_status: single
+                      occupation: Carpenter
+                      preferred_language: English
+                      care_of: perferendis
+                      rural_route_address: nisi
+                      mailing_street_address: '123 Heavens Gate'
+                      mailing_unit: 'Unit 69'
+                      mailing_po_box: 'PO Box 123456'
+                      mailing_postal_code: 'A1A 1A1'
+                      mailing_city: Toronto
+                      mailing_province: Ontario
+                      residential_street_address: '123 Heavens Gate'
+                      residential_unit: 'Unit 69'
+                      residential_city: Toronto
+                      residential_province: Ontario
+                      residential_postal_code: 'A1A 1A1'
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        example: 1
+                      email:
+                        type: string
+                        example: local_test@example.org
+                      phone_number:
+                        type: string
+                        example: '08123456789'
+                      profile:
+                        type: object
+                        properties:
+                          first_name:
+                            type: string
+                            example: Peter
+                          middle_name:
+                            type: string
+                            example: Benjamin
+                          last_name:
+                            type: string
+                            example: Parker
+                          date_of_birth:
+                            type: string
+                            example: '2006-07-03 00:00:00'
+                          social_insurance_number:
+                            type: string
+                            example: 497-449-730
+                          gender:
+                            type: string
+                            example: male
+                          marital_status:
+                            type: string
+                            example: single
+                          occupation:
+                            type: string
+                            example: Carpenter
+                          preferred_language:
+                            type: string
+                            example: English
+                          care_of:
+                            type: string
+                            example: perferendis
+                          rural_route_address:
+                            type: string
+                            example: nisi
+                          mailing_street_address:
+                            type: string
+                            example: '123 Heavens Gate'
+                          mailing_unit:
+                            type: string
+                            example: 'Unit 69'
+                          mailing_po_box:
+                            type: string
+                            example: 'PO Box 123456'
+                          mailing_postal_code:
+                            type: string
+                            example: 'A1A 1A1'
+                          mailing_city:
+                            type: string
+                            example: Toronto
+                          mailing_province:
+                            type: string
+                            example: Ontario
+                          residential_street_address:
+                            type: string
+                            example: '123 Heavens Gate'
+                          residential_unit:
+                            type: string
+                            example: 'Unit 69'
+                          residential_city:
+                            type: string
+                            example: Toronto
+                          residential_province:
+                            type: string
+                            example: Ontario
+                          residential_postal_code:
+                            type: string
+                            example: 'A1A 1A1'
+        422:
+          description: ''
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: "{\n    \"message\": \"invalid verification code\",\n    \"data\": null,\n}"
+      tags:
+        - 'Email verification'
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                code:
+                  type: string
+                  description: 'verification code.'
+                  example: '1234'
+                  nullable: false
   /api/user:
     get:
       summary: ''
@@ -30,13 +174,29 @@ paths:
         - Endpoints
   /api/auth/password-reset:
     post:
-      summary: ''
-      operationId: postApiAuthPasswordReset
-      description: ''
+      summary: 'Send password reset email'
+      operationId: sendPasswordResetEmail
+      description: 'Send an email with password reset otp'
       parameters: []
-      responses: {  }
+      responses:
+        200:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: 'password reset code sent successfully'
+                  data: null
+                properties:
+                  message:
+                    type: string
+                    example: 'password reset code sent successfully'
+                  data:
+                    type: string
+                    example: null
       tags:
-        - Endpoints
+        - 'Password Reset'
       requestBody:
         required: true
         content:
@@ -47,20 +207,36 @@ paths:
                 email:
                   type: string
                   description: 'Must be a valid email address.'
-                  example: alvena06@example.org
+                  example: dubuque.clemens@example.com
                   nullable: false
               required:
                 - email
       security: []
   /api/auth/password-reset/verify:
     post:
-      summary: ''
-      operationId: postApiAuthPasswordResetVerify
-      description: ''
+      summary: 'Verify password reset'
+      operationId: verifyPasswordReset
+      description: 'Verify password reset email by OTP'
       parameters: []
-      responses: {  }
+      responses:
+        200:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: 'password reset successfully'
+                  data: null
+                properties:
+                  message:
+                    type: string
+                    example: 'password reset successfully'
+                  data:
+                    type: string
+                    example: null
       tags:
-        - Endpoints
+        - 'Password Reset'
       requestBody:
         required: true
         content:
@@ -70,299 +246,29 @@ paths:
               properties:
                 code:
                   type: string
-                  description: ''
-                  example: voluptas
+                  description: 'Password reset verification code.'
+                  example: '1234'
                   nullable: false
                 email:
                   type: string
                   description: 'Must be a valid email address.'
-                  example: tillman.sandra@example.org
+                  example: roberta26@example.com
                   nullable: false
                 password:
                   type: string
-                  description: ''
-                  example: id
+                  description: 'Super secure password.'
+                  example: superSecurePassword1234
+                  nullable: false
+                password_confirmation:
+                  type: string
+                  description: 'confirm password.'
+                  example: superSecurePassword1234
                   nullable: false
               required:
                 - code
                 - email
                 - password
       security: []
-  /api/auth/verify:
-    post:
-      summary: ''
-      operationId: postApiAuthVerify
-      description: ''
-      parameters: []
-      responses: {  }
-      tags:
-        - Endpoints
-  /api/profile/user:
-    post:
-      summary: ''
-      operationId: postApiProfileUser
-      description: ''
-      parameters: []
-      responses: {  }
-      tags:
-        - Endpoints
-      requestBody:
-        required: false
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                first_name:
-                  type: string
-                  description: ''
-                  example: corporis
-                  nullable: false
-                middle_name:
-                  type: string
-                  description: ''
-                  example: molestias
-                  nullable: true
-                last_name:
-                  type: string
-                  description: ''
-                  example: eius
-                  nullable: false
-                date_of_birth:
-                  type: string
-                  description: 'Must be a valid date. Must be a date before <code>2007-01-01 00:00:00</code>.'
-                  example: '2001-11-24'
-                  nullable: false
-                social_insurance_number:
-                  type: string
-                  description: 'Must match the regex /^\d{3}-\d{3}-\d{3}$/.'
-                  example: 562-859-389
-                  nullable: false
-                gender:
-                  type: string
-                  description: ''
-                  example: female
-                  nullable: false
-                  enum:
-                    - male
-                    - female
-                    - unspecified
-                marital_status:
-                  type: string
-                  description: ''
-                  example: single
-                  nullable: false
-                  enum:
-                    - married
-                    - single
-                occupation:
-                  type: string
-                  description: ''
-                  example: numquam
-                  nullable: false
-                preferred_language:
-                  type: string
-                  description: ''
-                  example: ut
-                  nullable: false
-                care_of:
-                  type: string
-                  description: ''
-                  example: velit
-                  nullable: false
-                rural_route_address:
-                  type: string
-                  description: ''
-                  example: quis
-                  nullable: false
-                mailing_street_address:
-                  type: string
-                  description: ''
-                  example: quisquam
-                  nullable: false
-                mailing_unit:
-                  type: string
-                  description: ''
-                  example: ad
-                  nullable: false
-                mailing_po_box:
-                  type: string
-                  description: ''
-                  example: tempore
-                  nullable: false
-                mailing_postal_code:
-                  type: string
-                  description: ''
-                  example: natus
-                  nullable: false
-                mailing_city:
-                  type: string
-                  description: ''
-                  example: nihil
-                  nullable: false
-                mailing_province:
-                  type: string
-                  description: ''
-                  example: dolorem
-                  nullable: false
-                residential_street_address:
-                  type: string
-                  description: ''
-                  example: culpa
-                  nullable: false
-                residential_unit:
-                  type: string
-                  description: ''
-                  example: consequuntur
-                  nullable: false
-                residential_city:
-                  type: string
-                  description: ''
-                  example: sunt
-                  nullable: false
-                residential_province:
-                  type: string
-                  description: ''
-                  example: porro
-                  nullable: false
-                residential_postal_code:
-                  type: string
-                  description: ''
-                  example: dolores
-                  nullable: false
-  /api/profile/update:
-    post:
-      summary: ''
-      operationId: postApiProfileUpdate
-      description: ''
-      parameters: []
-      responses: {  }
-      tags:
-        - Endpoints
-      requestBody:
-        required: false
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                first_name:
-                  type: string
-                  description: ''
-                  example: quisquam
-                  nullable: true
-                middle_name:
-                  type: string
-                  description: ''
-                  example: porro
-                  nullable: true
-                last_name:
-                  type: string
-                  description: ''
-                  example: et
-                  nullable: true
-                date_of_birth:
-                  type: string
-                  description: 'Must be a valid date. Must be a date before <code>2007-01-01 00:00:00</code>.'
-                  example: '2006-10-23'
-                  nullable: true
-                social_insurance_number:
-                  type: string
-                  description: 'Must match the regex /^\d{3}-\d{3}-\d{3}$/.'
-                  example: 355-561-090
-                  nullable: true
-                gender:
-                  type: string
-                  description: ''
-                  example: male
-                  nullable: true
-                  enum:
-                    - male
-                    - female
-                    - unspecified
-                marital_status:
-                  type: string
-                  description: ''
-                  example: married
-                  nullable: true
-                  enum:
-                    - married
-                    - single
-                occupation:
-                  type: string
-                  description: ''
-                  example: quaerat
-                  nullable: true
-                preferred_language:
-                  type: string
-                  description: ''
-                  example: magni
-                  nullable: true
-                care_of:
-                  type: string
-                  description: ''
-                  example: hic
-                  nullable: true
-                rural_route_address:
-                  type: string
-                  description: ''
-                  example: nihil
-                  nullable: true
-                mailing_street_address:
-                  type: string
-                  description: ''
-                  example: officiis
-                  nullable: true
-                mailing_unit:
-                  type: string
-                  description: ''
-                  example: qui
-                  nullable: true
-                mailing_po_box:
-                  type: string
-                  description: ''
-                  example: rerum
-                  nullable: true
-                mailing_postal_code:
-                  type: string
-                  description: ''
-                  example: dignissimos
-                  nullable: true
-                mailing_city:
-                  type: string
-                  description: ''
-                  example: exercitationem
-                  nullable: true
-                mailing_province:
-                  type: string
-                  description: ''
-                  example: similique
-                  nullable: true
-                residential_street_address:
-                  type: string
-                  description: ''
-                  example: placeat
-                  nullable: true
-                residential_unit:
-                  type: string
-                  description: ''
-                  example: ab
-                  nullable: true
-                residential_city:
-                  type: string
-                  description: ''
-                  example: velit
-                  nullable: true
-                residential_province:
-                  type: string
-                  description: ''
-                  example: natus
-                  nullable: true
-                residential_postal_code:
-                  type: string
-                  description: ''
-                  example: maiores
-                  nullable: true
   /api/auth/register:
     post:
       summary: 'Register User'
@@ -378,23 +284,115 @@ paths:
                 type: object
                 example:
                   data:
-                    name: 'Lela Wunsch'
-                    email: alessandra87@example.net
-                    email_verified_at: '2024-12-24T02:31:41.000000Z'
+                    id: 1
+                    email: local_test@example.org
+                    phone_number: '08123456789'
+                    profile:
+                      first_name: Peter
+                      middle_name: Benjamin
+                      last_name: Parker
+                      date_of_birth: '2006-07-03 00:00:00'
+                      social_insurance_number: 497-449-730
+                      gender: male
+                      marital_status: single
+                      occupation: Carpenter
+                      preferred_language: English
+                      care_of: perferendis
+                      rural_route_address: nisi
+                      mailing_street_address: '123 Heavens Gate'
+                      mailing_unit: 'Unit 69'
+                      mailing_po_box: 'PO Box 123456'
+                      mailing_postal_code: 'A1A 1A1'
+                      mailing_city: Toronto
+                      mailing_province: Ontario
+                      residential_street_address: '123 Heavens Gate'
+                      residential_unit: 'Unit 69'
+                      residential_city: Toronto
+                      residential_province: Ontario
+                      residential_postal_code: 'A1A 1A1'
                   token: xxxxxx
                 properties:
                   data:
                     type: object
                     properties:
-                      name:
-                        type: string
-                        example: 'Lela Wunsch'
+                      id:
+                        type: integer
+                        example: 1
                       email:
                         type: string
-                        example: alessandra87@example.net
-                      email_verified_at:
+                        example: local_test@example.org
+                      phone_number:
                         type: string
-                        example: '2024-12-24T02:31:41.000000Z'
+                        example: '08123456789'
+                      profile:
+                        type: object
+                        properties:
+                          first_name:
+                            type: string
+                            example: Peter
+                          middle_name:
+                            type: string
+                            example: Benjamin
+                          last_name:
+                            type: string
+                            example: Parker
+                          date_of_birth:
+                            type: string
+                            example: '2006-07-03 00:00:00'
+                          social_insurance_number:
+                            type: string
+                            example: 497-449-730
+                          gender:
+                            type: string
+                            example: male
+                          marital_status:
+                            type: string
+                            example: single
+                          occupation:
+                            type: string
+                            example: Carpenter
+                          preferred_language:
+                            type: string
+                            example: English
+                          care_of:
+                            type: string
+                            example: perferendis
+                          rural_route_address:
+                            type: string
+                            example: nisi
+                          mailing_street_address:
+                            type: string
+                            example: '123 Heavens Gate'
+                          mailing_unit:
+                            type: string
+                            example: 'Unit 69'
+                          mailing_po_box:
+                            type: string
+                            example: 'PO Box 123456'
+                          mailing_postal_code:
+                            type: string
+                            example: 'A1A 1A1'
+                          mailing_city:
+                            type: string
+                            example: Toronto
+                          mailing_province:
+                            type: string
+                            example: Ontario
+                          residential_street_address:
+                            type: string
+                            example: '123 Heavens Gate'
+                          residential_unit:
+                            type: string
+                            example: 'Unit 69'
+                          residential_city:
+                            type: string
+                            example: Toronto
+                          residential_province:
+                            type: string
+                            example: Ontario
+                          residential_postal_code:
+                            type: string
+                            example: 'A1A 1A1'
                   token:
                     type: string
                     example: xxxxxx
@@ -410,7 +408,7 @@ paths:
                 email:
                   type: string
                   description: 'Must be a valid email address.'
-                  example: stone.adams@example.org
+                  example: rosalyn.lind@example.com
                   nullable: false
                 phone_number:
                   type: string
@@ -420,6 +418,11 @@ paths:
                 password:
                   type: string
                   description: 'Super secure password.'
+                  example: superSecurePassword1234
+                  nullable: false
+                password_confirmation:
+                  type: string
+                  description: 'confirm password.'
                   example: superSecurePassword1234
                   nullable: false
               required:
@@ -442,23 +445,115 @@ paths:
                 type: object
                 example:
                   data:
-                    name: 'Hipolito Labadie'
-                    email: koch.elsa@example.net
-                    email_verified_at: '2024-12-24T02:31:41.000000Z'
+                    id: 1
+                    email: local_test@example.org
+                    phone_number: '08123456789'
+                    profile:
+                      first_name: Peter
+                      middle_name: Benjamin
+                      last_name: Parker
+                      date_of_birth: '2006-07-03 00:00:00'
+                      social_insurance_number: 497-449-730
+                      gender: male
+                      marital_status: single
+                      occupation: Carpenter
+                      preferred_language: English
+                      care_of: perferendis
+                      rural_route_address: nisi
+                      mailing_street_address: '123 Heavens Gate'
+                      mailing_unit: 'Unit 69'
+                      mailing_po_box: 'PO Box 123456'
+                      mailing_postal_code: 'A1A 1A1'
+                      mailing_city: Toronto
+                      mailing_province: Ontario
+                      residential_street_address: '123 Heavens Gate'
+                      residential_unit: 'Unit 69'
+                      residential_city: Toronto
+                      residential_province: Ontario
+                      residential_postal_code: 'A1A 1A1'
                   token: xxxxxx
                 properties:
                   data:
                     type: object
                     properties:
-                      name:
-                        type: string
-                        example: 'Hipolito Labadie'
+                      id:
+                        type: integer
+                        example: 1
                       email:
                         type: string
-                        example: koch.elsa@example.net
-                      email_verified_at:
+                        example: local_test@example.org
+                      phone_number:
                         type: string
-                        example: '2024-12-24T02:31:41.000000Z'
+                        example: '08123456789'
+                      profile:
+                        type: object
+                        properties:
+                          first_name:
+                            type: string
+                            example: Peter
+                          middle_name:
+                            type: string
+                            example: Benjamin
+                          last_name:
+                            type: string
+                            example: Parker
+                          date_of_birth:
+                            type: string
+                            example: '2006-07-03 00:00:00'
+                          social_insurance_number:
+                            type: string
+                            example: 497-449-730
+                          gender:
+                            type: string
+                            example: male
+                          marital_status:
+                            type: string
+                            example: single
+                          occupation:
+                            type: string
+                            example: Carpenter
+                          preferred_language:
+                            type: string
+                            example: English
+                          care_of:
+                            type: string
+                            example: perferendis
+                          rural_route_address:
+                            type: string
+                            example: nisi
+                          mailing_street_address:
+                            type: string
+                            example: '123 Heavens Gate'
+                          mailing_unit:
+                            type: string
+                            example: 'Unit 69'
+                          mailing_po_box:
+                            type: string
+                            example: 'PO Box 123456'
+                          mailing_postal_code:
+                            type: string
+                            example: 'A1A 1A1'
+                          mailing_city:
+                            type: string
+                            example: Toronto
+                          mailing_province:
+                            type: string
+                            example: Ontario
+                          residential_street_address:
+                            type: string
+                            example: '123 Heavens Gate'
+                          residential_unit:
+                            type: string
+                            example: 'Unit 69'
+                          residential_city:
+                            type: string
+                            example: Toronto
+                          residential_province:
+                            type: string
+                            example: Ontario
+                          residential_postal_code:
+                            type: string
+                            example: 'A1A 1A1'
                   token:
                     type: string
                     example: xxxxxx
@@ -474,7 +569,7 @@ paths:
                 email:
                   type: string
                   description: 'Must be a valid email address.'
-                  example: owindler@example.net
+                  example: aleen20@example.com
                   nullable: false
                 password:
                   type: string
@@ -485,13 +580,520 @@ paths:
                 - email
                 - password
       security: []
+  /api/profile/user:
+    post:
+      summary: 'Create Profile'
+      operationId: createProfile
+      description: 'Create user profile'
+      parameters: []
+      responses:
+        200:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  data:
+                    id: 1
+                    email: local_test@example.org
+                    phone_number: '08123456789'
+                    profile:
+                      first_name: Peter
+                      middle_name: Benjamin
+                      last_name: Parker
+                      date_of_birth: '2006-07-03 00:00:00'
+                      social_insurance_number: 497-449-730
+                      gender: male
+                      marital_status: single
+                      occupation: Carpenter
+                      preferred_language: English
+                      care_of: perferendis
+                      rural_route_address: nisi
+                      mailing_street_address: '123 Heavens Gate'
+                      mailing_unit: 'Unit 69'
+                      mailing_po_box: 'PO Box 123456'
+                      mailing_postal_code: 'A1A 1A1'
+                      mailing_city: Toronto
+                      mailing_province: Ontario
+                      residential_street_address: '123 Heavens Gate'
+                      residential_unit: 'Unit 69'
+                      residential_city: Toronto
+                      residential_province: Ontario
+                      residential_postal_code: 'A1A 1A1'
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        example: 1
+                      email:
+                        type: string
+                        example: local_test@example.org
+                      phone_number:
+                        type: string
+                        example: '08123456789'
+                      profile:
+                        type: object
+                        properties:
+                          first_name:
+                            type: string
+                            example: Peter
+                          middle_name:
+                            type: string
+                            example: Benjamin
+                          last_name:
+                            type: string
+                            example: Parker
+                          date_of_birth:
+                            type: string
+                            example: '2006-07-03 00:00:00'
+                          social_insurance_number:
+                            type: string
+                            example: 497-449-730
+                          gender:
+                            type: string
+                            example: male
+                          marital_status:
+                            type: string
+                            example: single
+                          occupation:
+                            type: string
+                            example: Carpenter
+                          preferred_language:
+                            type: string
+                            example: English
+                          care_of:
+                            type: string
+                            example: perferendis
+                          rural_route_address:
+                            type: string
+                            example: nisi
+                          mailing_street_address:
+                            type: string
+                            example: '123 Heavens Gate'
+                          mailing_unit:
+                            type: string
+                            example: 'Unit 69'
+                          mailing_po_box:
+                            type: string
+                            example: 'PO Box 123456'
+                          mailing_postal_code:
+                            type: string
+                            example: 'A1A 1A1'
+                          mailing_city:
+                            type: string
+                            example: Toronto
+                          mailing_province:
+                            type: string
+                            example: Ontario
+                          residential_street_address:
+                            type: string
+                            example: '123 Heavens Gate'
+                          residential_unit:
+                            type: string
+                            example: 'Unit 69'
+                          residential_city:
+                            type: string
+                            example: Toronto
+                          residential_province:
+                            type: string
+                            example: Ontario
+                          residential_postal_code:
+                            type: string
+                            example: 'A1A 1A1'
+      tags:
+        - 'User Profile'
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                first_name:
+                  type: string
+                  description: 'First name.'
+                  example: Peter
+                  nullable: false
+                middle_name:
+                  type: string
+                  description: 'Middle name.'
+                  example: Benjamin
+                  nullable: true
+                last_name:
+                  type: string
+                  description: 'Last name.'
+                  example: Parker
+                  nullable: false
+                date_of_birth:
+                  type: string
+                  description: 'Date of birth. Must be a valid date. Must be a date before <code>2007-01-01 00:00:00</code>.'
+                  example: '2000-08-25'
+                  nullable: false
+                social_insurance_number:
+                  type: string
+                  description: 'Social Insurance Number. Must match the regex /^\d{3}-\d{3}-\d{3}$/.'
+                  example: 564-679-288
+                  nullable: false
+                gender:
+                  type: string
+                  description: ''
+                  example: unspecified
+                  nullable: false
+                  enum:
+                    - male
+                    - female
+                    - unspecified
+                marital_status:
+                  type: string
+                  description: ''
+                  example: married
+                  nullable: false
+                  enum:
+                    - married
+                    - single
+                occupation:
+                  type: string
+                  description: Occupation.
+                  example: Carpenter
+                  nullable: false
+                preferred_language:
+                  type: string
+                  description: 'Preferred language.'
+                  example: English
+                  nullable: false
+                care_of:
+                  type: string
+                  description: ''
+                  example: deserunt
+                  nullable: false
+                rural_route_address:
+                  type: string
+                  description: ''
+                  example: et
+                  nullable: false
+                mailing_street_address:
+                  type: string
+                  description: 'Mailing street address.'
+                  example: '123 Heavens Gate'
+                  nullable: false
+                mailing_unit:
+                  type: string
+                  description: 'Mailing unit.'
+                  example: 'Unit 69'
+                  nullable: false
+                mailing_po_box:
+                  type: string
+                  description: 'Mailing PO.'
+                  example: 'PO Box 123456'
+                  nullable: false
+                mailing_postal_code:
+                  type: string
+                  description: 'Mailing postal code.'
+                  example: 'A1A 1A1'
+                  nullable: false
+                mailing_city:
+                  type: string
+                  description: 'Mailing city.'
+                  example: Toronto
+                  nullable: false
+                mailing_province:
+                  type: string
+                  description: 'Mailing Province.'
+                  example: Ontario
+                  nullable: false
+                residential_street_address:
+                  type: string
+                  description: 'Residential street address.'
+                  example: '123 Heavens Gate'
+                  nullable: false
+                residential_unit:
+                  type: string
+                  description: 'Residential unit.'
+                  example: 'Unit 69'
+                  nullable: false
+                residential_city:
+                  type: string
+                  description: 'Residential city.'
+                  example: Toronto
+                  nullable: false
+                residential_province:
+                  type: string
+                  description: 'Residential Province.'
+                  example: Ontario
+                  nullable: false
+                residential_postal_code:
+                  type: string
+                  description: 'Residential postal code.'
+                  example: 'A1A 1A1'
+                  nullable: false
+  /api/profile/update:
+    post:
+      summary: 'Update Profile'
+      operationId: updateProfile
+      description: 'Update user profile'
+      parameters: []
+      responses:
+        200:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  data:
+                    id: 1
+                    email: local_test@example.org
+                    phone_number: '08123456789'
+                    profile:
+                      first_name: Peter
+                      middle_name: Benjamin
+                      last_name: Parker
+                      date_of_birth: '2006-07-03 00:00:00'
+                      social_insurance_number: 497-449-730
+                      gender: male
+                      marital_status: single
+                      occupation: Carpenter
+                      preferred_language: English
+                      care_of: perferendis
+                      rural_route_address: nisi
+                      mailing_street_address: '123 Heavens Gate'
+                      mailing_unit: 'Unit 69'
+                      mailing_po_box: 'PO Box 123456'
+                      mailing_postal_code: 'A1A 1A1'
+                      mailing_city: Toronto
+                      mailing_province: Ontario
+                      residential_street_address: '123 Heavens Gate'
+                      residential_unit: 'Unit 69'
+                      residential_city: Toronto
+                      residential_province: Ontario
+                      residential_postal_code: 'A1A 1A1'
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        example: 1
+                      email:
+                        type: string
+                        example: local_test@example.org
+                      phone_number:
+                        type: string
+                        example: '08123456789'
+                      profile:
+                        type: object
+                        properties:
+                          first_name:
+                            type: string
+                            example: Peter
+                          middle_name:
+                            type: string
+                            example: Benjamin
+                          last_name:
+                            type: string
+                            example: Parker
+                          date_of_birth:
+                            type: string
+                            example: '2006-07-03 00:00:00'
+                          social_insurance_number:
+                            type: string
+                            example: 497-449-730
+                          gender:
+                            type: string
+                            example: male
+                          marital_status:
+                            type: string
+                            example: single
+                          occupation:
+                            type: string
+                            example: Carpenter
+                          preferred_language:
+                            type: string
+                            example: English
+                          care_of:
+                            type: string
+                            example: perferendis
+                          rural_route_address:
+                            type: string
+                            example: nisi
+                          mailing_street_address:
+                            type: string
+                            example: '123 Heavens Gate'
+                          mailing_unit:
+                            type: string
+                            example: 'Unit 69'
+                          mailing_po_box:
+                            type: string
+                            example: 'PO Box 123456'
+                          mailing_postal_code:
+                            type: string
+                            example: 'A1A 1A1'
+                          mailing_city:
+                            type: string
+                            example: Toronto
+                          mailing_province:
+                            type: string
+                            example: Ontario
+                          residential_street_address:
+                            type: string
+                            example: '123 Heavens Gate'
+                          residential_unit:
+                            type: string
+                            example: 'Unit 69'
+                          residential_city:
+                            type: string
+                            example: Toronto
+                          residential_province:
+                            type: string
+                            example: Ontario
+                          residential_postal_code:
+                            type: string
+                            example: 'A1A 1A1'
+      tags:
+        - 'User Profile'
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                first_name:
+                  type: string
+                  description: 'First name.'
+                  example: Peter
+                  nullable: true
+                middle_name:
+                  type: string
+                  description: 'Middle name.'
+                  example: Benjamin
+                  nullable: true
+                last_name:
+                  type: string
+                  description: 'Last name.'
+                  example: Parker
+                  nullable: true
+                date_of_birth:
+                  type: string
+                  description: 'Date of birth. Must be a valid date. Must be a date before <code>2007-01-01 00:00:00</code>.'
+                  example: '2000-09-12'
+                  nullable: true
+                social_insurance_number:
+                  type: string
+                  description: 'Social Insurance Number. Must match the regex /^\d{3}-\d{3}-\d{3}$/.'
+                  example: 208-816-103
+                  nullable: true
+                gender:
+                  type: string
+                  description: ''
+                  example: unspecified
+                  nullable: true
+                  enum:
+                    - male
+                    - female
+                    - unspecified
+                marital_status:
+                  type: string
+                  description: ''
+                  example: married
+                  nullable: true
+                  enum:
+                    - married
+                    - single
+                occupation:
+                  type: string
+                  description: Occupation.
+                  example: Carpenter
+                  nullable: true
+                preferred_language:
+                  type: string
+                  description: 'Preferred language.'
+                  example: English
+                  nullable: true
+                care_of:
+                  type: string
+                  description: ''
+                  example: voluptatibus
+                  nullable: true
+                rural_route_address:
+                  type: string
+                  description: ''
+                  example: maiores
+                  nullable: true
+                mailing_street_address:
+                  type: string
+                  description: 'Mailing street address.'
+                  example: '123 Heavens Gate'
+                  nullable: true
+                mailing_unit:
+                  type: string
+                  description: 'Mailing unit.'
+                  example: 'Unit 69'
+                  nullable: true
+                mailing_po_box:
+                  type: string
+                  description: 'Mailing PO.'
+                  example: 'PO Box 123456'
+                  nullable: true
+                mailing_postal_code:
+                  type: string
+                  description: 'Mailing postal code.'
+                  example: 'A1A 1A1'
+                  nullable: true
+                mailing_city:
+                  type: string
+                  description: 'Mailing city.'
+                  example: Toronto
+                  nullable: true
+                mailing_province:
+                  type: string
+                  description: 'Mailing Province.'
+                  example: Ontario
+                  nullable: true
+                residential_street_address:
+                  type: string
+                  description: 'Residential street address.'
+                  example: '123 Heavens Gate'
+                  nullable: true
+                residential_unit:
+                  type: string
+                  description: 'Residential unit.'
+                  example: 'Unit 69'
+                  nullable: true
+                residential_city:
+                  type: string
+                  description: 'Residential city.'
+                  example: Toronto
+                  nullable: true
+                residential_province:
+                  type: string
+                  description: 'Residential Province.'
+                  example: Ontario
+                  nullable: true
+                residential_postal_code:
+                  type: string
+                  description: 'Residential postal code.'
+                  example: 'A1A 1A1'
+                  nullable: true
 tags:
+  -
+    name: 'Email verification'
+    description: "\nApi for verifying email"
   -
     name: Endpoints
     description: ''
   -
+    name: 'Password Reset'
+    description: "\nApis for resetting forgotten passwords"
+  -
     name: 'User Authentication'
-    description: "\nApi for registering and logging in user accounts"
+    description: "\nApis for registering and logging in user accounts"
+  -
+    name: 'User Profile'
+    description: "\nApis for managing user profile data"
 components:
   securitySchemes:
     default:
