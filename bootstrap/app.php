@@ -4,7 +4,6 @@ use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Request;
-use Symfony\Component\HttpFoundation\Response;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -23,16 +22,5 @@ return Application::configure(basePath: dirname(__DIR__))
             }
 
             return $request->expectsJson();
-        });
-
-        $exceptions->respond(function (Response $response) {
-            if ($response->getStatusCode() === 500) {
-                return back()->with([
-                    'message' => 'Something went wrong',
-                    'error' => $response->getContent(),
-                ]);
-            }
-
-            return $response;
         });
     })->create();

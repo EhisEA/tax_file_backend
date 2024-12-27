@@ -26,7 +26,6 @@ Route::name('auth.')->group(function () {
     Route::post('/auth/verify', EmailVerificationController::class)->name('verify')->middleware('auth:sanctum');
 });
 
-
 Route::middleware('auth:sanctum')->group(function () {
     Route::controller(UserProfileController::class)->name('user.profile.')->group(function () {
         Route::post('/profile/user', 'store')->name('store');
