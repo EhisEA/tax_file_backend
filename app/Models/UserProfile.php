@@ -3,7 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\MorphOne;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class UserProfile extends Model
 {
@@ -13,8 +13,11 @@ class UserProfile extends Model
         'updated_at',
     ];
 
-    public function user(): MorphOne
+    /**
+     * @return BelongsTo<User,UserProfile>
+     */
+    public function user(): BelongsTo
     {
-        return $this->morphOne(User::class, 'profileable');
+        return $this->belongsTo(User::class);
     }
 }

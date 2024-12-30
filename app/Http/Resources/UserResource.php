@@ -2,7 +2,6 @@
 
 namespace App\Http\Resources;
 
-use App\Models\UserProfile;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -19,11 +18,7 @@ class UserResource extends JsonResource
             'id' => $this['id'],
             'email' => $this['email'],
             'phone_number' => $this['phone_number'],
-            'profile' => $this->when(
-                $this['profileable_type'] === get_class(new UserProfile()),
-                new UserProfileResource($this->whenLoaded('profileable')),
-                null
-            )
+            'profile' => new UserProfileResource($this->whenLoaded('profile')),
         ];
     }
 }
