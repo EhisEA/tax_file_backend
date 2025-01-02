@@ -5,34 +5,45 @@ declare(strict_types=1);
 namespace App\Http\Controllers;
 
 use App\Http\Resources\UserResource;
+use App\Mail\EmailVerification;
 use App\Models\VerificationCode;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use function Symfony\Component\String\u;
+use Illuminate\Support\Facades\Mail;
 
 /**
- * @group Email verification
+ * Apis for verifying email
  *
- * Api for verifying email
  */
 class EmailVerificationController extends Controller
 {
 
     /**
-     * Verify Email
+     * Send verification mail
      *
+     */
+    public function sendEmail(Request $request): JsonResponse
+    {
+        $verification_code = VerificationCode::query()->create([
+            'code' => mt_rand(1000, 9999),
+            'user_id' => $request->user()->id,
+            'used_at' => null,
+            'expires_at' => Carbon::now()->addHour(),
+        ]);
+
+        Mail::to($request->user())->send(new EmailVerification($verification_code));
+
+        return response()->json([
+            'message' => 'Email verification link sent on your email.',
+        ]);
+    }
+
+    /**
      * Verify email by code
      *
-     * @bodyParam code string verification code. Example: 1234
-     * @response 422 {
-     *     "message": "invalid verification code",
-     *     "data": null,
-     * }
-     * @apiResource App\Http\Resources\UserResource
-     * @apiResourceModel App\Models\User
      */
-    public function __invoke(Request $request): JsonResponse | UserResource
+    public function verify(Request $request): JsonResponse|UserResource
     {
         $user = $request->user();
         $code = $request->string('code');
@@ -55,5 +66,4 @@ class EmailVerificationController extends Controller
 
         return new UserResource($user);
     }
-
 }

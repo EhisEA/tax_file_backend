@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class UserProfile extends Model
 {
-    public $guarded = [
+    protected $guarded = [
         'id',
         'created_at',
         'updated_at',

@@ -17,6 +17,7 @@ class UserProfileResource extends JsonResource
         return [
             'first_name' => $this['first_name'],
             'middle_name' => $this['middle_name'],
+            'phone_number' => $this['phone_number'],
             'last_name' => $this['last_name'],
             'date_of_birth' => $this['date_of_birth'],
             'social_insurance_number' => $this['social_insurance_number'],

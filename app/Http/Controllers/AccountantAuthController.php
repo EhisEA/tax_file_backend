@@ -4,78 +4,68 @@ namespace App\Http\Controllers;
 
 use App\Events\Registered;
 use App\Http\Resources\UserResource;
+use App\Models\AccountantInformation;
+use App\Models\AccountantProfile;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Str;
 use Illuminate\Validation\Rules\Password;
+use Str;
 
-/**
- * User Authentication
- *
- */
-class UserAuthController extends Controller
+class AccountantAuthController extends Controller
 {
-    /**
-     * Create and register a user account
-     *
-     */
     public function register(Request $request): UserResource
     {
-        // TODO: better phone number validation
-        //       also in form requests
-
         $data = $request->validate([
             'first_name' => ['required', 'string', 'max:255'],
             'last_name' => ['required', 'string', 'max:255'],
-            'email' => ['email', 'required', 'unique:users'],
-            'phone_number' => ['required'],
+            'email' => ['required', 'email', 'max:255', 'unique:users'],
             'password' => ['required', Password::min(8)],
         ]);
+
+        DB::beginTransaction();
 
         $user = User::query()->create([
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
         ]);
 
-        $user->user_profile()->create([
-            'phone_number' => $data['phone_number'],
+        /* @var AccountantProfile $profile */
+        $profile = $user->accountant_profile()->create();
+        $profile->kyc()->create([
             'first_name' => $data['first_name'],
             'last_name' => $data['last_name'],
         ]);
 
         $token = $user->createToken(Str::random(10));
+
+        DB::commit();
+
         Registered::dispatch($user);
 
-        return (new UserResource($user->load('user_profile')))->additional([
+        return (new UserResource($user))->additional([
             'token' => $token->plainTextToken,
         ]);
     }
 
-    /**
-     * Login to a user account
-     *
-     */
     public function login(Request $request): UserResource|JsonResponse
     {
         $data = $request->validate([
-            'email' => ['email', 'required'],
-            'password' => ['required'],
+            'email' => ['required', 'string', 'email'],
+            'password' => ['required', 'string'],
         ]);
 
         if (Auth::attempt($data)) {
-            Log::info('logging in user');
-            $user = User::query()->where('email', $data['email'])->with('user_profile')->sole();
-
-            if ($user->user_profile === null) {
-                Log::info('user is not a user account');
+            $user = User::query()->where('email', $data['email'])->with('accountant_profile')->sole();
+            if ($user->accountant_profile === null) {
                 return response()->json([
                     'message' => 'invalid login credentials',
                 ], 422);
             }
+
 
             $token = $user->createToken(Str::random(10));
 
@@ -84,7 +74,6 @@ class UserAuthController extends Controller
             ]);
         }
 
-        Log::info('failed login');
         return response()->json([
             'message' => 'invalid login credentials',
         ], 422);

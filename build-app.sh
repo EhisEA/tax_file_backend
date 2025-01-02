@@ -4,7 +4,7 @@
 npm run build
 
 # generate docs
-php artisan scribe:generate
+# php artisan scribe:generate
 
 # Clear cache
 php artisan optimize:clear
