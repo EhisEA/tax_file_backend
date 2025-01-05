@@ -7,6 +7,7 @@ namespace App\Http\Controllers;
 use App\Mail\PasswordReset;
 use App\Models\User;
 use App\Models\VerificationCode;
+use App\Notifications\PasswordResetNotification;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -93,6 +94,8 @@ class PasswordResetController extends Controller
 
         $user->password = Hash::make($request->string('password')->toString());
         $user->save();
+
+        $user->notify(new PasswordResetNotification($user));
 
         return response()->json([
             'message' => 'password reset successfully',

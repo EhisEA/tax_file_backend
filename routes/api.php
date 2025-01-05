@@ -5,6 +5,7 @@ use App\Http\Controllers\AccountantKYCController;
 use App\Http\Controllers\EmailVerificationController;
 use App\Http\Controllers\PasswordResetController;
 use App\Http\Controllers\UserAuthController;
+use App\Http\Controllers\UserNotificationController;
 use App\Http\Controllers\UserProfileController;
 use App\Http\Resources\UserResource;
 use App\Models\User;
@@ -51,3 +52,7 @@ Route::controller(UserProfileController::class)->name('user.profile.')->middlewa
 });
 
 Route::post('/accountant/kyc', AccountantKYCController::class)->name('accountant.kyc')->middleware('auth:sanctum');
+
+Route::middleware('auth:sannctum')->group(function (){
+    Route::get('/notifications', [UserNotificationController::class, 'allNotifications']);
+});
