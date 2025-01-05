@@ -53,6 +53,6 @@ Route::controller(UserProfileController::class)->name('user.profile.')->middlewa
 
 Route::post('/accountant/kyc', AccountantKYCController::class)->name('accountant.kyc')->middleware('auth:sanctum');
 
-Route::middleware('auth:sannctum')->group(function (){
+Route::middleware('auth:sanctum')->group(function (){
     Route::get('/notifications', [UserNotificationController::class, 'allNotifications']);
 });
