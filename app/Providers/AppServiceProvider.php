@@ -2,7 +2,9 @@
 
 namespace App\Providers;
 
+use Illuminate\Notifications\DatabaseNotification;
 use Illuminate\Routing\UrlGenerator;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -23,5 +25,7 @@ class AppServiceProvider extends ServiceProvider
         if (env('APP_ENV') == 'production') {
             $generator->forceScheme('https');
         }
+
+        Route::model('notification', DatabaseNotification::class);
     }
 }

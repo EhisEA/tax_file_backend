@@ -1,55 +1,56 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Http\Resources\UserNotificationCollection;
+use App\Http\Resources\UserNotificationResource;
+use App\Models\User;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Notifications\DatabaseNotification;
 use Illuminate\Support\Facades\Auth;
 
 class UserNotificationController extends Controller
 {
-    public function allNotifications()
+    public function index(): UserNotificationCollection
     {
+        /* @var User $user */
         $user = Auth::user();
 
-        $notifications = $user->notifications->orderBy('created_at', 'desc')->paginate(10);
-
-        return response()->json($notifications);
+        return new UserNotificationCollection($user->notifications);
     }
 
-    public function getSingleNotification($notificationId)
+    public function show(DatabaseNotification $notification): JsonResponse|UserNotificationResource
     {
+        /* @var User $user */
         $user = Auth::user();
 
-        // $notification = $user->notifications()->find($notificationId);
-        $notification = $user->notifications->find($notificationId);
+        if ($user->notifications->contains($notification)) {
+            $notification->markAsRead();
 
-        if ($notification) {
-            return response()->json([
-                'message' => 'Notification found',
-                'notification' => $notification
-            ], 200);
+            return new UserNotificationResource($notification->refresh());
         }
 
         return response()->json(['message' => 'Notification not found'], 404);
     }
 
-    public function markAllAsRead()
+    public function markAllAsRead(): JsonResponse
     {
-        Auth::user()->unreadNotifications->markAsRead();
+        /* @var User $user */
+        $user = Auth::user();
+
+        $user->unreadNotifications->markAsRead();
 
         return response()->json(['message' => 'All notifications marked as read']);
     }
 
-    public function markSingleNotificationAsRead($notificationId)
+    public function markNotificationAsRead(DatabaseNotification $notification): JsonResponse
     {
+        /* @var User $user */
         $user = Auth::user();
 
-        $user_notification = $user->notifications;
-
-        $notification = $user_notification->find($notificationId);
-
-        if ($notification) {
-
+        if ($user->notifications->contains($notification)) {
             $notification->markAsRead();
 
             return response()->json(['message' => 'Notification marked as read']);
@@ -57,6 +58,5 @@ class UserNotificationController extends Controller
 
         return response()->json(['message' => 'Notification not found'], 404);
     }
-
 
 }

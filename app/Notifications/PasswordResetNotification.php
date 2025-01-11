@@ -11,15 +11,10 @@ class PasswordResetNotification extends Notification
 {
     use Queueable;
 
-    protected $user;
-
     /**
      * Create a new notification instance.
      */
-    public function __construct($user)
-    {
-        $this->user = $user;
-    }
+    public function __construct() { }
 
     /**
      * Get the notification's delivery channels.
@@ -42,11 +37,10 @@ class PasswordResetNotification extends Notification
     //                 ->line('Thank you for using our application!');
     // }
 
-    public function toDatabase($notifiable)
+    public function toDatabase($notifiable): array
     {
         return [
-            'user_id' => $this->user->id,
-            'message' => $this->user->name . ' your password has been reset.',
+            //
         ];
     }
     /**
@@ -59,5 +53,10 @@ class PasswordResetNotification extends Notification
         return [
             //
         ];
+    }
+
+    public function databaseType(object $notifiable):string
+    {
+        return 'password-reset';
     }
 }
