@@ -17,8 +17,8 @@ class UserResource extends JsonResource
         return [
             'id' => $this['id'],
             'email' => $this['email'],
-            'user_profile' => new UserProfileResource($this->whenLoaded('user_profile')),
-            'accountant_profile' => new AccountantProfileResource($this->whenLoaded('accountant_profile')),
+            'user_profile' => new UserProfileResource($this->whenLoaded('userProfile')),
+            'accountant_profile' => new AccountantProfileResource($this->whenLoaded('accountantProfile')),
         ];
     }
 }

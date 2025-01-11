@@ -23,8 +23,8 @@ class CreateAccountantKYCRequest extends FormRequest
             return false;
         }
 
-        $user->load('accountant_profile');
-        if ($user->accountant_profile === null) {
+        $user->load('accountantProfile');
+        if ($user->accountantProfile === null) {
             return false;
         }
 

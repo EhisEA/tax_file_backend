@@ -7,6 +7,8 @@ use App\Http\Requests\UpdateUserProfileRequest;
 use App\Http\Resources\UserResource;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 
 /**
  * User Profile
@@ -27,7 +29,7 @@ class UserProfileController extends Controller
 
         $user->load('user_profile');
 
-        $user->user_profile()->update($data);
+        $user->userProfile()->update($data);
         $user->assignRole('user');
 
         return new UserResource($user);
@@ -43,7 +45,18 @@ class UserProfileController extends Controller
         $user = $request->user();
         $data = $request->validated();
 
-        $user->user_profile()->update($data);
+        DB::transaction(function () use ($user, $data) {
+            // update payload should only include non-null data and should not include the password
+            $updatePayload = collect($data)->except('password')->filter(function ($value, $key) {
+                return !is_null($value);
+            });
+
+            $user->userProfile()->update($updatePayload->toArray());
+
+            if (isset($data['password'])) {
+                $user->update(['password' => Hash::make($data['password'])]);
+            }
+        });
 
         return new UserResource($user);
     }

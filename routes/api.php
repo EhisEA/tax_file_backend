@@ -17,8 +17,8 @@ Route::get('/user', function (Request $request) {
     /* @var User $user*/
     $user = $request->user();
 
-    $user->load('user_profile');
-    $user->load('accountant_profile.kyc');
+    $user->load('userProfile');
+    $user->load('accountantProfile.kyc');
 
     return new UserResource($request->user());
 })->middleware('auth:sanctum');

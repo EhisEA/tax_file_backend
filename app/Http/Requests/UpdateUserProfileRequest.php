@@ -9,6 +9,7 @@ use Carbon\Carbon;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\Rules\Password;
 
 class UpdateUserProfileRequest extends FormRequest
 {
@@ -20,12 +21,12 @@ class UpdateUserProfileRequest extends FormRequest
         /* @var User $user */
         $user = $this->user();
 
-        if (!$user->hasVerifiedEmail()){
+        if (!$user->hasVerifiedEmail()) {
             return false;
         }
 
-        $user->load('user_profile');
-        if ($user->user_profile === null) {
+        $user->load('userProfile');
+        if ($user->userProfile === null) {
             return false;
         }
 
@@ -66,7 +67,9 @@ class UpdateUserProfileRequest extends FormRequest
             'residential_unit' => ['string', 'nullable'],
             'residential_city' => ['string', 'nullable'],
             'residential_province' => ['string', 'nullable'],
-            'residential_postal_code' => ['string', 'nullable']
+            'residential_postal_code' => ['string', 'nullable'],
+
+            'password' => ['string', Password::min(8), 'nullable'],
         ];
     }
 }
