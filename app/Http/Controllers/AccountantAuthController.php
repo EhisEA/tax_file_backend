@@ -34,7 +34,7 @@ class AccountantAuthController extends Controller
         ]);
 
         /* @var AccountantProfile $profile */
-        $profile = $user->accountant_profile()->create();
+        $profile = $user->accountantProfile()->create();
         $profile->kyc()->create([
             'first_name' => $data['first_name'],
             'last_name' => $data['last_name'],
@@ -59,8 +59,8 @@ class AccountantAuthController extends Controller
         ]);
 
         if (Auth::attempt($data)) {
-            $user = User::query()->where('email', $data['email'])->with('accountant_profile')->sole();
-            if ($user->accountant_profile === null) {
+            $user = User::query()->where('email', $data['email'])->with('accountantProfile')->sole();
+            if ($user->accountantProfile === null) {
                 return response()->json([
                     'message' => 'invalid login credentials',
                 ], 422);

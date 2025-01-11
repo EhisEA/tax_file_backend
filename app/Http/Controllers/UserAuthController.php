@@ -41,7 +41,7 @@ class UserAuthController extends Controller
             'password' => Hash::make($data['password']),
         ]);
 
-        $user->user_profile()->create([
+        $user->userProfile()->create([
             'phone_number' => $data['phone_number'],
             'first_name' => $data['first_name'],
             'last_name' => $data['last_name'],
@@ -68,9 +68,9 @@ class UserAuthController extends Controller
 
         if (Auth::attempt($data)) {
             Log::info('logging in user');
-            $user = User::query()->where('email', $data['email'])->with('user_profile')->sole();
+            $user = User::query()->where('email', $data['email'])->with('userProfile')->sole();
 
-            if ($user->user_profile === null) {
+            if ($user->userProfile === null) {
                 Log::info('user is not a user account');
                 return response()->json([
                     'message' => 'invalid login credentials',

@@ -24,8 +24,8 @@ class CreateUserProfileRequest extends FormRequest
             return false;
         }
 
-        $user->load('user_profile');
-        if ($user->user_profile === null) {
+        $user->load('userProfile');
+        if ($user->userProfile === null) {
             return false;
         }
 

@@ -15,8 +15,8 @@ use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
 
 /**
- * @property AccountantProfile $accountant_profile
- * @property UserProfile $user_profile
+ * @property AccountantProfile $accountantProfile
+ * @property UserProfile $userProfile
  * @property DatabaseNotificationCollection $notifications
  * @property DatabaseNotificationCollection $unreadNotifications
  */
@@ -64,7 +64,7 @@ class User extends Authenticatable
     /**
      * @return HasOne<UserProfile,User>
      */
-    public function user_profile(): HasOne
+    public function userProfile(): HasOne
     {
         return $this->hasOne(UserProfile::class);
     }
@@ -72,7 +72,7 @@ class User extends Authenticatable
     /**
      * @return HasOne<AccountantProfile, User>
      */
-    public function accountant_profile(): HasOne
+    public function accountantProfile(): HasOne
     {
         return $this->hasOne(AccountantProfile::class);
     }
