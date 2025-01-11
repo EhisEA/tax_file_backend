@@ -7,10 +7,12 @@ namespace App\Http\Controllers;
 use App\Mail\PasswordReset;
 use App\Models\User;
 use App\Models\VerificationCode;
+use App\Notifications\PasswordResetNotification;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Validation\Rules\Password;
 
@@ -23,17 +25,7 @@ use Illuminate\Validation\Rules\Password;
  */
 class PasswordResetController extends Controller
 {
-    /**
-     * Send password reset email
-     *
-     * Send an email with password reset otp
-     *
-     * @response {
-     *     "message": "password reset code sent successfully",
-     *     "data": null
-     * }
-     */
-    public function sendPasswordResetEmail(Request $request): JsonResponse
+    public function sendEmail(Request $request): JsonResponse
     {
         $data = $request->validate(['email' => ['required', 'email']]);
 
@@ -54,25 +46,12 @@ class PasswordResetController extends Controller
         ]);
     }
 
-    /**
-     * Verify password reset
-     *
-     * Verify password reset email by OTP
-     *
-     * @bodyParam password_confirmation string confirm password. Example: superSecurePassword1234
-     * @response {
-     *     "message": "password reset successfully",
-     *     "data": null
-     * }
-     */
-    public function verifyPasswordResetCode(Request $request): JsonResponse
+    public function verifyCode(Request $request): JsonResponse
     {
         $request->validate([
-            // Password reset verification code. Example: 1234
             'code' => ['required'],
             'email' => ['required', 'email'],
-            // Super secure password. Example: superSecurePassword1234
-            'password' => ['required', 'confirmed', Password::min(8)]
+            'password' => ['required', Password::min(8)]
         ]);
 
         $user = User::query()->where('email', $request->string('email'))->first();
@@ -93,6 +72,8 @@ class PasswordResetController extends Controller
 
         $user->password = Hash::make($request->string('password')->toString());
         $user->save();
+
+        $user->notify(new PasswordResetNotification());
 
         return response()->json([
             'message' => 'password reset successfully',

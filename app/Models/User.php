@@ -4,16 +4,21 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Database\Factories\UserFactory;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\DatabaseNotification;
+use Illuminate\Notifications\DatabaseNotificationCollection;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
 
 /**
- * @property mixed $accountant_profile
- * @property mixed $user_profile
+ * @property AccountantProfile $accountant_profile
+ * @property UserProfile $user_profile
+ * @property DatabaseNotificationCollection $notifications
+ * @property DatabaseNotificationCollection $unreadNotifications
  */
 class User extends Authenticatable
 {
