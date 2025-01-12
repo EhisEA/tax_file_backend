@@ -27,9 +27,7 @@ class UserProfileController extends Controller
         $user = $request->user();
         $data = $request->validated();
 
-        $user->load('user_profile');
-
-        $user->userProfile()->update($data);
+        $user->profile()->update($data);
         $user->assignRole('user');
 
         return new UserResource($user);
@@ -51,7 +49,7 @@ class UserProfileController extends Controller
                 return !is_null($value);
             });
 
-            $user->userProfile()->update($updatePayload->toArray());
+            $user->profile()->update($updatePayload->toArray());
 
             if (isset($data['password'])) {
                 $user->update(['password' => Hash::make($data['password'])]);

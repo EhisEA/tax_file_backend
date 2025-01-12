@@ -53,8 +53,7 @@ class EmailVerificationController extends Controller
 
         if ($verification_code === null) {
             return response()->json([
-                'message' => 'invalid verification code',
-                'data' => null,
+                'message' => 'Invalid verification code',
             ], 422);
         }
 
@@ -64,6 +63,8 @@ class EmailVerificationController extends Controller
         $user->email_verified_at = Carbon::now();
         $user->save();
 
-        return new UserResource($user);
+        return response()->json([
+            'message' => 'Email verified successfully',
+        ]);
     }
 }

@@ -33,12 +33,14 @@ class AccountantAuthController extends Controller
             'password' => Hash::make($data['password']),
         ]);
 
-        /* @var AccountantProfile $profile */
-        $profile = $user->accountantProfile()->create();
+        $profile = AccountantProfile::query()->create();
         $profile->kyc()->create([
             'first_name' => $data['first_name'],
             'last_name' => $data['last_name'],
         ]);
+
+        $user->profile()->associate($profile);
+        $user->save();
 
         $token = $user->createToken(Str::random(10));
 
@@ -59,16 +61,14 @@ class AccountantAuthController extends Controller
         ]);
 
         if (Auth::attempt($data)) {
-            $user = User::query()->where('email', $data['email'])->with('accountantProfile')->sole();
-            if ($user->accountantProfile === null) {
+            $user = User::query()->where('email', $data['email'])->sole();
+            if (($user->profile instanceof AccountantProfile) === false) {
                 return response()->json([
                     'message' => 'invalid login credentials',
                 ], 422);
             }
 
-
             $token = $user->createToken(Str::random(10));
-
             return (new UserResource($user))->additional([
                 'token' => $token->plainTextToken,
             ]);

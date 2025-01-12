@@ -4,6 +4,7 @@ namespace App\Http\Requests;
 
 use App\Enums\Enums\MaritalStatusOptions;
 use App\Enums\GenderOptions;
+use App\Models\AccountantProfile;
 use App\Models\User;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
@@ -23,12 +24,7 @@ class CreateAccountantKYCRequest extends FormRequest
             return false;
         }
 
-        $user->load('accountantProfile');
-        if ($user->accountantProfile === null) {
-            return false;
-        }
-
-        return true;
+        return $user->profile instanceof AccountantProfile;
     }
 
     /**
