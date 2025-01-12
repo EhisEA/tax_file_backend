@@ -13,13 +13,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
 
+/* Helper route to get a user */
 Route::get('/user', function (Request $request) {
-    /* @var User $user*/
-    $user = $request->user();
-
-    $user->load('userProfile');
-    $user->load('accountantProfile.kyc');
-
     return new UserResource($request->user());
 })->middleware('auth:sanctum');
 

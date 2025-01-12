@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\CreateAccountantKYCRequest;
 use App\Http\Resources\UserResource;
+use App\Models\AccountantInformation;
+use App\Models\AccountantProfile;
 use App\Models\File;
 use App\Models\User;
 use Cloudinary\Api\Exception\ApiError;
@@ -27,15 +29,17 @@ class AccountantKYCController extends Controller
         $user = $request->user();
         $data = $request->validated();
 
-        $user->load('accountantProfile.kyc');
-        $kyc = $user->accountantProfile->kyc;
+        /* @var AccountantInformation $kyc */
+        $kyc = $user->profile->kyc()->sole();
 
         DB::beginTransaction();
 
         // filter out all file inputs
-        $kyc->update(collect($data)->filter(function ($value, $key) use ($request) {
+        $none_file_data = collect($data)->filter(function ($value, $key) use ($request) {
             return !$request->hasFile($key);
-        })->toArray());
+        });
+
+        $kyc->update($none_file_data->toArray());
 
         $profile_picture_upload = cloudinary()->upload($request->file('profile_picture')->getRealPath());
         $kyc->profile_picture()->associate(File::query()->create([

@@ -5,6 +5,7 @@ namespace App\Http\Requests;
 use App\Enums\Enums\MaritalStatusOptions;
 use App\Enums\GenderOptions;
 use App\Models\User;
+use App\Models\UserProfile;
 use Carbon\Carbon;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
@@ -25,12 +26,7 @@ class UpdateUserProfileRequest extends FormRequest
             return false;
         }
 
-        $user->load('userProfile');
-        if ($user->userProfile === null) {
-            return false;
-        }
-
-        return true;
+        return $user->profile instanceof UserProfile;
     }
 
     /**

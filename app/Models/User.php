@@ -3,22 +3,21 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Http\Controllers\UserProfileController;
 use Database\Factories\UserFactory;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Notifications\DatabaseNotification;
 use Illuminate\Notifications\DatabaseNotificationCollection;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
 
 /**
- * @property AccountantProfile $accountantProfile
- * @property UserProfile $userProfile
  * @property DatabaseNotificationCollection $notifications
  * @property DatabaseNotificationCollection $unreadNotifications
+ * @property AccountantProfile|UserProfileController $profile
  */
 class User extends Authenticatable
 {
@@ -46,7 +45,7 @@ class User extends Authenticatable
         'remember_token',
     ];
 
-    // protected $with = ['profile'];
+     protected $with = ['profile'];
 
     /**
      * Get the attributes that should be cast.
@@ -61,19 +60,8 @@ class User extends Authenticatable
         ];
     }
 
-    /**
-     * @return HasOne<UserProfile,User>
-     */
-    public function userProfile(): HasOne
+    public function profile(): MorphTo
     {
-        return $this->hasOne(UserProfile::class);
-    }
-
-    /**
-     * @return HasOne<AccountantProfile, User>
-     */
-    public function accountantProfile(): HasOne
-    {
-        return $this->hasOne(AccountantProfile::class);
+        return $this->morphTo();
     }
 }

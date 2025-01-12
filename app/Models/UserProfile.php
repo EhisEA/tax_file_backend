@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
 
 class UserProfile extends Model
 {
@@ -13,11 +14,8 @@ class UserProfile extends Model
         'updated_at',
     ];
 
-    /**
-     * @return BelongsTo<User,UserProfile>
-     */
-    public function user(): BelongsTo
+    public function user(): MorphOne
     {
-        return $this->belongsTo(User::class);
+        return $this->morphOne(User::class, 'profile');
     }
 }
