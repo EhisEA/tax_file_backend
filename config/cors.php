@@ -25,10 +25,14 @@ return [
 
     'allowed_headers' => ['*'],
 
+    'access-control-allow-origin' => ['*'],
+
+    'access-control-allow-methods' => ['GET, POST, PUT, DELETE, OPTIONS'],
+
     'exposed_headers' => [],
 
     'max_age' => 0,
 
-    'supports_credentials' => false,
+    'supports_credentials' => true,
 
 ];
