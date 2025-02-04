@@ -112,6 +112,11 @@ Route::middleware("auth:sanctum")->group(function () {
             NotificationController::class,
             "markAsRead",
         ])->name("read.single");
+
+        Route::delete("/notifications/{notification}", [
+            NotificationController::class,
+            "delete",
+        ])->name("delete");
     });
 
     Route::name("tax.file.")->group(function () {

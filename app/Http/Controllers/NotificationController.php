@@ -18,7 +18,9 @@ class NotificationController extends Controller
         /* @var User $user */
         $user = Auth::user();
 
-        return new UserNotificationCollection($user->notifications);
+        return new UserNotificationCollection(
+            $user->notifications()->paginate()
+        );
     }
 
     public function show(
@@ -58,6 +60,22 @@ class NotificationController extends Controller
 
             return response()->json([
                 "message" => "Notification marked as read",
+            ]);
+        }
+
+        return response()->json(["message" => "Notification not found"], 404);
+    }
+
+    public function delete(DatabaseNotification $notification): JsonResponse
+    {
+        /* @var User $user */
+        $user = Auth::user();
+
+        if ($user->notifications->contains($notification)) {
+            $notification->delete();
+
+            return response()->json([
+                "message" => "Notification deleted",
             ]);
         }
 
