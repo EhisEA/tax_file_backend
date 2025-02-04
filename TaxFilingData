@@ -1,0 +1,38 @@
+
+  App\Models\TaxFiling
+  Table tax_filings
+
+  Attributes
+  id => unique int primary_key
+  filing_year => integer
+  employment_status => string
+  is_filing_for_self => boolean
+  is_first_time_filing => boolean
+  is_indigenous => boolean
+  income_type_received => string
+  business_activity_category => nullable string
+  has_income_from_rentals => boolean
+  has_income_from_investments => boolean
+  was_resident_of_canada_for_tax_year => boolean
+  has_held_foreign_property_over_100k => boolean
+  has_received_foreign_income => boolean
+  marital_status => string
+  qualifies_for_disability_tax_credit => boolean
+  is_caregiver_for_disabled_family_member => boolean
+  is_foster_parent => boolean
+  special_occupations_work_in => string
+  is_creative_pro_with_unique_expenses => boolean
+  is_farmer_or_fisher => boolean
+  savings_plans_contributed_to => string
+  is_incurring_medical_expenses_for_self_or_dependent => boolean
+  is_working_from_home => boolean
+  has_made_charitable_donations => boolean
+  has_incurred_child_care_expenses => boolean
+  has_attended_post_secondary => boolean
+  has_completed_eligible_home_renovations => boolean
+  has_contributed_to_employment_expenses => boolean
+  has_lived_in_remote_area_for_six_months => boolean
+  extra_considerations => nullable string
+  submitted_at => nullable timestamp(0)
+  created_at => nullable timestamp(0)
+  updated_at => nullable timestamp(0)

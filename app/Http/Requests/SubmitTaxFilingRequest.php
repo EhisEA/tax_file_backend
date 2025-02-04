@@ -1,32 +1,32 @@
 <?php
 
-namespace App\Actions;
+namespace App\Http\Requests;
 
 use App\Enums\EmploymentStatusEnum;
-use App\Exceptions\InvalidTaxFilingException;
-use App\Http\Requests\SubmitTaxFilingRequest;
-use App\Models\TaxFiling;
 use Carbon\Carbon;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Validator;
+use Illuminate\Contracts\Validation\ValidationRule;
+use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 
-class ValidateTaxFilingAction
+class SubmitTaxFilingRequest extends FormRequest
 {
     /**
-     * Create a new class instance.
+     * Determine if the user is authorized to make this request.
      */
-    public function __construct()
+    public function authorize(Request $request): bool
     {
-        //
+        return $request->user()->can("submit-tax-filing");
     }
 
     /**
-     * @throws InvalidTaxFilingException
+     * Get the validation rules that apply to the request.
+     *
+     * @return array<string, ValidationRule|array|string>
      */
-    public function execute(TaxFiling $taxFiling): TaxFiling
+    public function rules(): array
     {
-        $validator = Validator::make($taxFiling->toArray(), [
+        return [
             "filing_year" => [
                 "required",
                 "numeric",
@@ -76,25 +76,12 @@ class ValidateTaxFilingAction
                 "boolean",
             ],
             "extra_considerations" => ["nullable", "string"],
-        ]);
-
-        Log::info("hello there");
-
-        if ($validator->fails()) {
-            Log::error($validator->errors()->messages());
-            throw new InvalidTaxFilingException(
-                errors: $validator->errors()->messages()
-            );
-        }
-
-        if ($taxFiling->loadCount("documents") === 0) {
-            throw new InvalidTaxFilingException(
-                "Tax filing must have at least one document"
-            );
-        }
-
-        $taxFiling->update(["submitted_at" => Carbon::today()]);
-
-        return $taxFiling;
+            "documents" => ["required", "array"],
+            "documents.*.name" => [
+                "required",
+                "exists:tax_document_kinds,name",
+            ],
+            "documents.*.file_id" => ["required", "exists:files,id"],
+        ];
     }
 }

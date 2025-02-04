@@ -30,25 +30,25 @@ class UserAuthController extends Controller
     public function register(Request $request): UserResource
     {
         $data = $request->validate([
-            'first_name' => ['required', 'string', 'max:255'],
-            'last_name' => ['required', 'string', 'max:255'],
-            'email' => ['email', 'required', 'unique:users'],
+            "first_name" => ["required", "string", "max:255"],
+            "last_name" => ["required", "string", "max:255"],
+            "email" => ["email", "required", "unique:users"],
             // TODO: better phone number validation (and also in form requests)
-            'phone_number' => ['required'],
-            'password' => ['required', Password::min(8)],
+            "phone_number" => ["required"],
+            "password" => ["required", Password::min(8)],
         ]);
 
         DB::beginTransaction();
 
         $user = User::query()->create([
-            'email' => $data['email'],
-            'password' => Hash::make($data['password']),
+            "email" => $data["email"],
+            "password" => Hash::make($data["password"]),
         ]);
 
         $profile = UserProfile::query()->create([
-            'phone_number' => $data['phone_number'],
-            'first_name' => $data['first_name'],
-            'last_name' => $data['last_name'],
+            "phone_number" => $data["phone_number"],
+            "first_name" => $data["first_name"],
+            "last_name" => $data["last_name"],
         ]);
 
         $user->profile()->associate($profile);
@@ -60,8 +60,11 @@ class UserAuthController extends Controller
 
         Registered::dispatch($user);
 
+        $user->load("profile");
+        Log::info($user->profile);
+
         return (new UserResource($user))->additional([
-            'token' => $token->plainTextToken,
+            "token" => $token->plainTextToken,
         ]);
     }
 
@@ -72,26 +75,34 @@ class UserAuthController extends Controller
     public function login(Request $request): UserResource|JsonResponse
     {
         $data = $request->validate([
-            'email' => ['email', 'required'],
-            'password' => ['required'],
+            "email" => ["email", "required"],
+            "password" => ["required"],
         ]);
 
         if (Auth::attempt($data)) {
-            $user = User::query()->where('email', $data['email'])->sole();
-            if (($user->profile instanceof UserProfile) === false) {
-                return response()->json([
-                    'message' => 'invalid login credentials',
-                ], 422);
+            /* @var User $user */
+            $user = User::query()->where("email", $data["email"])->sole();
+
+            if ($user->profile instanceof UserProfile === false) {
+                return response()->json(
+                    [
+                        "message" => "invalid login credentials",
+                    ],
+                    422
+                );
             }
 
             $token = $user->createToken(Str::random(10));
             return (new UserResource($user))->additional([
-                'token' => $token->plainTextToken,
+                "token" => $token->plainTextToken,
             ]);
         }
 
-        return response()->json([
-            'message' => 'invalid login credentials',
-        ], 422);
+        return response()->json(
+            [
+                "message" => "invalid login credentials",
+            ],
+            422
+        );
     }
 }
