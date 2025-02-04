@@ -4,4 +4,4 @@ php artisan migrate --force &&
 php artisan db:seed --force --class=TaxDocumentKindSeeder &&
 php artisan db:seed --force --class=UserWithNotificationSeeder &&
 node /assets/scripts/prestart.mjs /assets/nginx.template.conf  /nginx.conf &&
-(php-fpm -y /assets/php-fpm.conf & nginx -c /nginx.conf) &&
+(php-fpm -y /assets/php-fpm.conf & nginx -c /nginx.conf)
