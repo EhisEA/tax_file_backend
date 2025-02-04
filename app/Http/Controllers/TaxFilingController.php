@@ -1,84 +1,93 @@
 <?php
 
-use App\Models\TaxDocument;
-
 namespace App\Http\Controllers;
 
+use App\Actions\SubmitTaxFilingAction;
+use App\Http\Resources\TaxFilingCollection;
+use App\Actions\MakeTaxDocumentsAction;
 use App\Actions\ValidateTaxFilingAction;
 use App\Exceptions\InvalidTaxFilingException;
 use App\Http\Requests\SubmitDraftTaxFilingRequest;
 use App\Http\Requests\SubmitTaxFilingRequest;
 use App\Http\Requests\UpdateDraftTaxFilingRequest;
 use App\Http\Resources\TaxFilingResource;
-use App\Models\File;
-use App\Models\TaxDocumentkind;
+use App\Models\TaxDocument;
+use App\Models\TaxDocumentKind;
 use App\Models\TaxFiling;
-use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class TaxFilingController extends Controller
 {
-    public function index()
+    /**
+     * @return TaxFilingCollection
+     */
+    public function index(Request $request)
     {
+        /* @var User $user */
+        $user = $request->user();
+
+        $filings = $user->tax_filings()->get();
+
+        return new TaxFilingCollection($filings);
     }
 
-    public function show(TaxFiling $taxFiling)
+    /**
+     * @return TaxFilingResource|JsonResponse
+     */
+    public function show(Request $request, int $filing_id)
     {
-    }
+        /* @var User $user */
+        $user = $request->user();
 
-    public function submit(SubmitTaxFilingRequest $request): TaxFilingResource
-    {
-        $data = $request->validated();
+        $user->load("tax_filings");
 
-        DB::beginTransaction();
-
-        $taxFiling = TaxFiling::query()->create(collect($data)->except('documents')
-            ->merge(['submitted_at' => Carbon::today()])->toArray());
-
-        $tax_documents = collect();
-        foreach ($data['documents'] as $document) {
-            $file = File::query()->where('id', "=", $document["file_id"])->sole();
-            $document_kind = TaxDocumentkind::query()->where('kind_id', '=', $document['kind_id'])->sole();
-
-            $tax_documents->push([
-                'kind_id' => $document_kind->id,
-                'file_id' => $file->id
-            ]);
+        foreach ($user->tax_filings as $filing) {
+            if ($filing->id === $filing_id) {
+                return new TaxFilingResource($filing);
+            }
         }
 
-        $taxFiling->documents()->createMany($tax_documents);
-
-        DB::commit();
-
-        return new TaxFilingResource($taxFiling);
+        return response()->json(["message" => "Tax filing not found"], 404);
     }
 
-    public function storeDraft(SubmitDraftTaxFilingRequest $request): TaxFilingResource
-    {
+    public function submit(
+        SubmitTaxFilingRequest $request,
+        SubmitTaxFilingAction $submit_tax_filing_action
+    ): TaxFilingResource {
+        /* @var User $user */
+        $data = $request->validated();
+
+        $tax_filing = $submit_tax_filing_action->execute($data);
+
+        return new TaxFilingResource($tax_filing);
+    }
+
+    public function storeDraft(
+        SubmitDraftTaxFilingRequest $request,
+        MakeTaxDocumentsAction $make_tax_documents_action
+    ): TaxFilingResource {
+        /* @var User $user */
+        $user = $request->user();
+
         $data = $request->validated();
 
         DB::beginTransaction();
 
-        $create_query = collect($data)->except('documents')->filter(function ($value, $key) {
-            return !is_null($value);
-        });
+        $create_query = collect($data)
+            ->except("documents")
+            ->filter(function ($value, $key) {
+                return !is_null($value);
+            });
 
-        $taxFiling = TaxFiling::query()->create($create_query->toArray());
+        $taxFiling = $user->tax_filings()->create($create_query->toArray());
 
-        if (isset($data['documents'])) {
-            $tax_documents = collect();
-
-            foreach ($data['documents'] as $document) {
-                $file = File::query()->where('id', "=", $document["file_id"])->sole();
-                $document_kind = TaxDocumentkind::query()->where('kind_id', '=', $document['kind_id'])->sole();
-
-                $tax_documents->push([
-                    'kind_id' => $document_kind->id,
-                    'file_id' => $file->id
-                ]);
-            }
+        if (isset($data["documents"])) {
+            $tax_documents = $make_tax_documents_action->execute(
+                $data["documents"]
+            );
 
             $taxFiling->documents()->createMany($tax_documents);
         }
@@ -88,56 +97,83 @@ class TaxFilingController extends Controller
         return new TaxFilingResource($taxFiling);
     }
 
-    public function updateDraft(UpdateDraftTaxFilingRequest $request, TaxFiling $taxFiling): TaxFilingResource
-    {
+    public function updateDraft(
+        UpdateDraftTaxFilingRequest $request,
+        TaxFiling $tax_filing,
+        MakeTaxDocumentsAction $make_tax_documents_action
+    ): TaxFilingResource {
         $data = $request->validated();
-        $taxFiling->load('documents');
+        $tax_filing->load("documents");
 
         DB::beginTransaction();
 
-        $update_query = collect($data)->except('documents')->filter(function ($value, $key) {
-            return !is_null($value);
-        });
+        $update_query = collect($data)
+            ->except("documents")
+            ->filter(function ($value, $key) {
+                return !is_null($value);
+            });
 
-        $taxFiling->update($update_query);
+        $tax_filing->update($update_query->toArray());
 
-        if (isset($data['documents'])) {
-            $tax_documents = collect();
+        if (isset($data["documents"])) {
+            Log::info("doc u ment");
+            $tax_documents = $make_tax_documents_action->execute(
+                $data["documents"]
+            );
 
-            foreach ($data['documents'] as $document) {
-                $file = File::query()->where('id', "=", $document["file_id"])->sole();
-                $document_kind = TaxDocumentkind::query()->where('kind_id', '=', $document['kind_id'])->sole();
+            $documents = collect();
 
-                // update existing documents of this type with the new uploaded files
-                /* @var TaxDocument $existing_document */
-                $existing_document = $taxFiling->documents->firstWhere('kind_id', '=', $document_kind->id);
-                $existing_document?->update(['file_id', $file->id]);
+            foreach ($tax_documents as $document) {
+                $document_exists = $tax_filing->documents->first(function (
+                    TaxDocument $tax_document
+                ) use ($document) {
+                    return $tax_document->kind_id === $document["kind_id"] &&
+                        $tax_document->file_id === $document["file_id"];
+                });
 
-                $tax_documents->push([
-                    'kind_id' => $document_kind->id,
-                    'file_id' => $file->id
-                ]);
+                if ($document_exists) {
+                    continue;
+                }
+
+                $documents->push($document);
             }
 
-            $taxFiling->documents()->createMany($tax_documents);
+            $tax_filing->documents()->createMany($documents);
         }
 
         DB::commit();
 
-        return new TaxFilingResource($taxFiling);
+        return new TaxFilingResource($tax_filing->refresh());
     }
 
     /**
      * @throws InvalidTaxFilingException
      */
-    public function submitDraft(TaxFiling $taxFiling, ValidateTaxFilingAction $validateTaxFilingAction): TaxFilingResource
-    {
-        return new TaxFilingResource($validateTaxFilingAction->execute($taxFiling));
+    public function submitDraft(
+        Request $request,
+        TaxFiling $taxFiling,
+        ValidateTaxFilingAction $validateTaxFilingAction
+    ): TaxFilingResource|JsonResponse {
+        /* @var User $user */
+        $user = $request->user();
+
+        $user->load("tax_filings");
+
+        Log::info("hello");
+
+        if ($user->tax_filings->doesntContain($taxFiling)) {
+            return response()->json(["message" => "Tax filing not found"], 404);
+        }
+
+        Log::info("hello1");
+        return new TaxFilingResource(
+            $validateTaxFilingAction->execute($taxFiling)
+        );
     }
 
-    public function getDocumentKinds(Request $request, TaxFiling $taxFiling): JsonResponse
+    public function getDocumentKinds(): JsonResponse
     {
-        $kinds = TaxDocumentkind::all();
+        $kinds = TaxDocumentKind::all();
         return response()->json($kinds);
     }
 }

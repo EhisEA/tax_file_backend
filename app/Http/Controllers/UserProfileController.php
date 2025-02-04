@@ -21,14 +21,15 @@ class UserProfileController extends Controller
      * Create user profile
      *
      */
-    public function store(CreateUserProfileRequest $request): UserResource|JsonResponse
-    {
+    public function store(
+        CreateUserProfileRequest $request
+    ): UserResource|JsonResponse {
         /* @var User $user */
         $user = $request->user();
         $data = $request->validated();
 
         $user->profile()->update($data);
-        $user->assignRole('user');
+        $user->assignRole("user");
 
         return new UserResource($user);
     }
@@ -37,22 +38,25 @@ class UserProfileController extends Controller
      * Update user profile
      *
      */
-    public function update(UpdateUserProfileRequest $request): UserResource|JsonResponse
-    {
+    public function update(
+        UpdateUserProfileRequest $request
+    ): UserResource|JsonResponse {
         /* @var User $user */
         $user = $request->user();
         $data = $request->validated();
 
         DB::transaction(function () use ($user, $data) {
             // update payload should only include non-null data and should not include the password
-            $updatePayload = collect($data)->except('password')->filter(function ($value, $key) {
-                return !is_null($value);
-            });
+            $updatePayload = collect($data)
+                ->except("password")
+                ->filter(function ($value, $key) {
+                    return !is_null($value);
+                });
 
             $user->profile()->update($updatePayload->toArray());
 
-            if (isset($data['password'])) {
-                $user->update(['password' => Hash::make($data['password'])]);
+            if (isset($data["password"])) {
+                $user->update(["password" => Hash::make($data["password"])]);
             }
         });
 

@@ -11,7 +11,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Notifications\DatabaseNotification;
 use Illuminate\Support\Facades\Auth;
 
-class UserNotificationController extends Controller
+class NotificationController extends Controller
 {
     public function index(): UserNotificationCollection
     {
@@ -21,8 +21,9 @@ class UserNotificationController extends Controller
         return new UserNotificationCollection($user->notifications);
     }
 
-    public function show(DatabaseNotification $notification): JsonResponse|UserNotificationResource
-    {
+    public function show(
+        DatabaseNotification $notification
+    ): JsonResponse|UserNotificationResource {
         /* @var User $user */
         $user = Auth::user();
 
@@ -32,7 +33,7 @@ class UserNotificationController extends Controller
             return new UserNotificationResource($notification->refresh());
         }
 
-        return response()->json(['message' => 'Notification not found'], 404);
+        return response()->json(["message" => "Notification not found"], 404);
     }
 
     public function markAllAsRead(): JsonResponse
@@ -42,10 +43,12 @@ class UserNotificationController extends Controller
 
         $user->unreadNotifications->markAsRead();
 
-        return response()->json(['message' => 'All notifications marked as read']);
+        return response()->json([
+            "message" => "All notifications marked as read",
+        ]);
     }
 
-    public function markNotificationAsRead(DatabaseNotification $notification): JsonResponse
+    public function markAsRead(DatabaseNotification $notification): JsonResponse
     {
         /* @var User $user */
         $user = Auth::user();
@@ -53,10 +56,11 @@ class UserNotificationController extends Controller
         if ($user->notifications->contains($notification)) {
             $notification->markAsRead();
 
-            return response()->json(['message' => 'Notification marked as read']);
+            return response()->json([
+                "message" => "Notification marked as read",
+            ]);
         }
 
-        return response()->json(['message' => 'Notification not found'], 404);
+        return response()->json(["message" => "Notification not found"], 404);
     }
-
 }

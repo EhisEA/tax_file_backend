@@ -16,7 +16,7 @@ class SubmitDraftTaxFilingRequest extends FormRequest
      */
     public function authorize(Request $request): bool
     {
-        return $request->user()->can('submit-tax-filing');
+        return $request->user()->can("submit-tax-filing");
     }
 
     /**
@@ -27,8 +27,16 @@ class SubmitDraftTaxFilingRequest extends FormRequest
     public function rules(): array
     {
         return [
-            "filing_year" => ["required", "numeric", "integer", "max:" . Carbon::today()->year],
-            "employment_status" => ["nullable", Rule::enum(EmploymentStatusEnum::class)],
+            "filing_year" => [
+                "required",
+                "numeric",
+                "integer",
+                "max:" . Carbon::today()->year,
+            ],
+            "employment_status" => [
+                "nullable",
+                Rule::enum(EmploymentStatusEnum::class),
+            ],
             "is_filing_for_self" => ["nullable", "boolean"],
             "is_first_time_filing" => ["nullable", "boolean"],
             "is_indigenous" => ["nullable", "boolean"],
@@ -41,24 +49,39 @@ class SubmitDraftTaxFilingRequest extends FormRequest
             "has_received_foreign_income" => ["nullable", "boolean"],
             "marital_status" => ["nullable", "string"],
             "qualifies_for_disability_tax_credit" => ["nullable", "boolean"],
-            "is_caregiver_for_disabled_family_member" => ["nullable", "boolean"],
+            "is_caregiver_for_disabled_family_member" => [
+                "nullable",
+                "boolean",
+            ],
             "is_foster_parent" => ["nullable", "boolean"],
             "special_occupations_work_in" => ["nullable", "string"],
             "is_creative_pro_with_unique_expenses" => ["nullable", "boolean"],
             "is_farmer_or_fisher" => ["nullable", "boolean"],
             "savings_plans_contributed_to" => ["nullable", "string"],
-            "is_incurring_medical_expenses_for_self_or_dependent" => ["nullable", "boolean"],
+            "is_incurring_medical_expenses_for_self_or_dependent" => [
+                "nullable",
+                "boolean",
+            ],
             "is_working_from_home" => ["nullable", "boolean"],
             "has_made_charitable_donations" => ["nullable", "boolean"],
             "has_incurred_child_care_expenses" => ["nullable", "boolean"],
             "has_attended_post_secondary" => ["nullable", "boolean"],
-            "has_completed_eligible_home_renovations" => ["nullable", "boolean"],
+            "has_completed_eligible_home_renovations" => [
+                "nullable",
+                "boolean",
+            ],
             "has_contributed_to_employment_expenses" => ["nullable", "boolean"],
-            "has_lived_in_remote_area_for_six_months" => ["nullable", "boolean"],
+            "has_lived_in_remote_area_for_six_months" => [
+                "nullable",
+                "boolean",
+            ],
             "extra_considerations" => ["nullable", "string"],
-            "documents" => ['nullable', 'array'],
-            "documents.*.name" => ['nullable', 'exists:tax_document_kinds,name'],
-            "documents.*.file_id" => ['nullable', 'exists:files'],
+            "documents" => ["nullable", "array"],
+            "documents.*.name" => [
+                "nullable",
+                "exists:tax_document_kinds,name",
+            ],
+            "documents.*.file_id" => ["nullable", "exists:files,id"],
         ];
     }
 }

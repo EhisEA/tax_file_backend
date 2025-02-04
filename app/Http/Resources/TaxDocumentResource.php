@@ -4,6 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use phpDocumentor\Reflection\Types\This;
 
 class TaxDocumentResource extends JsonResource
 {
@@ -14,6 +15,10 @@ class TaxDocumentResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        return parent::toArray($request);
+        return [
+            "id" => $this["id"],
+            "kind" => $this["kind"],
+            "file" => $this["file"],
+        ];
     }
 }
