@@ -35,8 +35,8 @@ class UserWithNotificationSeeder extends Seeder
         $user->profile()->associate($profile);
         $user->save();
 
-        // for ($i = 1; $i <= 20; $i++) {
-        //     $user->notify(new PasswordResetNotification());
-        // }
+        for ($i = 1; $i <= 20; $i++) {
+            $user->notify(new PasswordResetNotification());
+        }
     }
 }
