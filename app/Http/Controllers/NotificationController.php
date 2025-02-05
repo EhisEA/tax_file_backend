@@ -8,19 +8,31 @@ use App\Http\Resources\UserNotificationCollection;
 use App\Http\Resources\UserNotificationResource;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Notifications\DatabaseNotification;
 use Illuminate\Support\Facades\Auth;
 
 class NotificationController extends Controller
 {
-    public function index(): UserNotificationCollection
+    public function index(Request $request): UserNotificationCollection
     {
         /* @var User $user */
         $user = Auth::user();
 
-        return new UserNotificationCollection(
-            $user->notifications()->paginate()
-        );
+        switch ($request->string("status")) {
+            case "read":
+                return new UserNotificationCollection(
+                    $user->readNotifications()->paginate()
+                );
+            case "unread":
+                return new UserNotificationCollection(
+                    $user->unreadNotifications()->paginate()
+                );
+            default:
+                return new UserNotificationCollection(
+                    $user->notifications()->paginate()
+                );
+        }
     }
 
     public function show(
