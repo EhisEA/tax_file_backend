@@ -117,6 +117,11 @@ Route::middleware("auth:sanctum")->group(function () {
             NotificationController::class,
             "delete",
         ])->name("delete");
+
+        Route::delete("/notifications", [
+            NotificationController::class,
+            "deleteMany",
+        ])->name("delete.many");
     });
 
     Route::name("tax.file.")->group(function () {

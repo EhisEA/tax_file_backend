@@ -93,4 +93,53 @@ class NotificationController extends Controller
 
         return response()->json(["message" => "Notification not found"], 404);
     }
+
+    public function deleteMany(Request $request): JsonResponse
+    {
+        /* @var User $user */
+        $user = Auth::user();
+
+        $data = $request->validate([
+            "notifications" => ["array"],
+            "notifications.*" => ["uuid", "exists:notifications,id"],
+        ]);
+
+        $errors = collect();
+        $notifications = collect();
+
+        // make sure all notifications exist
+        foreach ($data["notifications"] as $notification_id) {
+            $notification = DatabaseNotification::query()->firstWhere(
+                "id",
+                "=",
+                $notification_id
+            );
+
+            if ($user->notifications->doesntContain($notification)) {
+                $errors->push([
+                    $notification->id => "not found",
+                ]);
+            }
+
+            $notifications->push($notification);
+        }
+
+        if ($errors->empty()) {
+            foreach ($notifications as $notification) {
+                $notification->delete();
+            }
+
+            return response()->json([
+                "message" => "Notifications deleted",
+            ]);
+        }
+
+        return response()->json(
+            [
+                "message" => "Error deleting notifications",
+                "errors" => $errors->toArray(),
+            ],
+            404
+        );
+    }
 }
