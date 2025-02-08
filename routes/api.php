@@ -8,6 +8,7 @@ use App\Http\Controllers\TaxFilingController;
 use App\Http\Controllers\UploadFileController;
 use App\Http\Controllers\UserAuthController;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\ReferralController;
 use App\Http\Controllers\UserProfileController;
 use App\Http\Resources\UserResource;
 use Illuminate\Http\Request;
@@ -117,6 +118,9 @@ Route::middleware("auth:sanctum")->group(function () {
             NotificationController::class,
             "delete",
         ])->name("delete");
+
+        Route::get('/referral/generate',[ReferralController::class, 'generateReferralCode']);
+        Route::get('/referrals', [ReferralController::class, 'referralHistory']);
     });
 
     Route::name("tax.file.")->group(function () {
