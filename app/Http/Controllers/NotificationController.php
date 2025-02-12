@@ -11,6 +11,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Notifications\DatabaseNotification;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class NotificationController extends Controller
 {
@@ -78,68 +79,45 @@ class NotificationController extends Controller
         return response()->json(["message" => "Notification not found"], 404);
     }
 
-    public function delete(DatabaseNotification $notification): JsonResponse
+    public function delete(Request $request): JsonResponse
     {
         /* @var User $user */
         $user = Auth::user();
 
-        if ($user->notifications->contains($notification)) {
-            $notification->delete();
-
-            return response()->json([
-                "message" => "Notification deleted",
-            ]);
-        }
-
-        return response()->json(["message" => "Notification not found"], 404);
-    }
-
-    public function deleteMany(Request $request): JsonResponse
-    {
-        /* @var User $user */
-        $user = Auth::user();
-
-        $data = $request->validate([
-            "notifications" => ["array"],
-            "notifications.*" => ["uuid", "exists:notifications,id"],
-        ]);
+        $notification_ids = $request->array("notifications");
 
         $errors = collect();
         $notifications = collect();
 
-        // make sure all notifications exist
-        foreach ($data["notifications"] as $notification_id) {
-            $notification = DatabaseNotification::query()->firstWhere(
-                "id",
-                "=",
-                $notification_id
+        foreach ($notification_ids as $notification_id) {
+            $notification = $user->notifications->first(
+                fn($notification) => $notification->id === $notification_id
             );
 
-            if ($user->notifications->doesntContain($notification)) {
-                $errors->push([
-                    $notification->id => "not found",
-                ]);
+            if ($notification === null) {
+                $errors->push($notification_id);
+                continue;
             }
 
-            $notifications->push($notification);
+            $notifications->push($notification->id);
         }
 
-        if ($errors->empty()) {
-            foreach ($notifications as $notification) {
-                $notification->delete();
-            }
-
-            return response()->json([
-                "message" => "Notifications deleted",
-            ]);
+        if ($errors->isNotEmpty()) {
+            return response()->json(
+                [
+                    "message" => "The following notifications are not found",
+                    "errors" => $errors->toArray(),
+                ],
+                404
+            );
         }
 
-        return response()->json(
-            [
-                "message" => "Error deleting notifications",
-                "errors" => $errors->toArray(),
-            ],
-            404
-        );
+        $rows = DatabaseNotification::query()
+            ->whereIn("id", $notifications->toArray())
+            ->delete();
+
+        return response()->json([
+            "message" => "Deleted {$rows} Notification(s)",
+        ]);
     }
 }
