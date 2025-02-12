@@ -6,6 +6,8 @@ namespace App\Http\Controllers;
 
 use App\Events\Registered;
 use App\Http\Resources\UserResource;
+use App\Models\Referral;
+use App\Models\ReferralWallet;
 use App\Models\User;
 use App\Models\UserProfile;
 use Illuminate\Http\JsonResponse;
@@ -36,7 +38,18 @@ class UserAuthController extends Controller
             // TODO: better phone number validation (and also in form requests)
             "phone_number" => ["required"],
             "password" => ["required", Password::min(8)],
+
+            "referral_code" => "nullable|string|exists:users,referral_code",
         ]);
+
+        // Check if the user has a valid referral code
+        $referrer = null;
+        if ($request->has("referral_code")) {
+            $referrer = User::where(
+                "referral_code",
+                $request->referral_code
+            )->first();
+        }
 
         DB::beginTransaction();
 
@@ -53,6 +66,13 @@ class UserAuthController extends Controller
 
         $user->profile()->associate($profile);
         $user->save();
+
+        if ($referrer) {
+            Referral::create([
+                "referrer_id" => $referrer->id,
+                "referree_id" => $user->id,
+            ]);
+        }
 
         $token = $user->createToken(Str::random(10));
 

@@ -2,8 +2,11 @@
 
 namespace App\Listeners;
 
+use App\Actions\AddUserReferralBonusAction;
 use App\Enums\PaymentStatus;
 use App\Models\Payment;
+use App\Models\ReferralWallet;
+use Illuminate\Support\Facades\DB;
 use Laravel\Cashier\Events\WebhookReceived;
 use Log;
 
@@ -25,10 +28,32 @@ class StripeEventListener
                     break;
                 }
 
+                DB::beginTransaction();
+
                 $payment->update([
                     "status" => PaymentStatus::COMPLETED,
                     "completed_at" => now(),
                 ]);
+
+                $wallet = ReferralWallet::whereUserId(
+                    $payment->user_id
+                )->first();
+
+                if ($wallet) {
+                    $wallet->amount -= $payment->discount;
+                    $wallet->save();
+                } else {
+                    ReferralWallet::create([
+                        "user_id" => $payment->user_id,
+                        "amount" => 10,
+                    ]);
+                }
+
+                app(AddUserReferralBonusAction::class)->execute(
+                    $payment->user_id
+                );
+
+                DB::commit();
 
                 break;
             case "payment_intent.canceled":

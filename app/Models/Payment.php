@@ -10,14 +10,14 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Str;
 
 /**
- *
+ * 
  *
  * @property string $id
  * @property string $invoice_id
  * @property string|null $stripe_payment_intent_id
- * @property string $total
- * @property string $charged_amount
- * @property string $discount
+ * @property float $total
+ * @property float $charged_amount
+ * @property float $discount
  * @property PaymentStatus $status
  * @property int $user_id
  * @property int $tax_filing_id
@@ -25,6 +25,7 @@ use Str;
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \App\Models\TaxFiling|null $taxFilings
+ * @property-read \App\Models\User $user
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Payment newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Payment newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Payment query()
@@ -67,5 +68,10 @@ class Payment extends Model
     public function taxFilings(): BelongsTo
     {
         return $this->belongsTo(TaxFiling::class);
+    }
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
     }
 }

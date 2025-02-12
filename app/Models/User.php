@@ -30,6 +30,7 @@ use Spatie\Permission\Traits\HasRoles;
  * @property string|null $pm_type
  * @property string|null $pm_last_four
  * @property string|null $trial_ends_at
+ * @property string|null $referral_code
  * @property-read DatabaseNotificationCollection<int, \Illuminate\Notifications\DatabaseNotification> $notifications
  * @property-read int|null $notifications_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Payment> $payments
@@ -37,6 +38,9 @@ use Spatie\Permission\Traits\HasRoles;
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Spatie\Permission\Models\Permission> $permissions
  * @property-read int|null $permissions_count
  * @property-read UserProfile|AccountantProfile|null $profile
+ * @property-read \App\Models\ReferralWallet|null $referral_wallet
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Referral> $referrals
+ * @property-read int|null $referrals_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Spatie\Permission\Models\Role> $roles
  * @property-read int|null $roles_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Laravel\Cashier\Subscription> $subscriptions
@@ -62,6 +66,7 @@ use Spatie\Permission\Traits\HasRoles;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User wherePmType($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereProfileId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereProfileType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereReferralCode($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereRememberToken($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereStripeId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereTrialEndsAt($value)
@@ -75,7 +80,12 @@ class User extends Authenticatable
     /** @use HasFactory<UserFactory> */
     use HasApiTokens, HasFactory, HasRoles, Notifiable, Billable;
 
-    protected $fillable = ["phone_number", "email", "password"];
+    protected $fillable = [
+        "phone_number",
+        "email",
+        "password",
+        "referral_code",
+    ];
 
     protected $hidden = ["password", "remember_token"];
 
@@ -113,5 +123,15 @@ class User extends Authenticatable
     public function payments(): HasMany
     {
         return $this->hasMany(Payment::class);
+    }
+
+    public function referrals()
+    {
+        return $this->hasMany(Referral::class);
+    }
+
+    public function referral_wallet()
+    {
+        return $this->hasOne(ReferralWallet::class);
     }
 }

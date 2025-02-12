@@ -10,6 +10,7 @@ use App\Enums\StripePaymentStatusEnum;
 use App\Http\Resources\PaymentCollection;
 use App\Http\Resources\PaymentResource;
 use App\Models\Payment;
+use App\Models\ReferralWallet;
 use App\Models\TaxFiling;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
@@ -75,8 +76,17 @@ class PaymentController extends Controller
 
         $discount = 0;
         if ($useReferral) {
-            // TODO: get discount from referral bonus
-            $discount = 10;
+            // Get discount from referral bonus
+            $wallet = ReferralWallet::whereUserId($user->id)->first();
+
+            if ($wallet) {
+                $discount = $wallet->amount;
+            } else {
+                ReferralWallet::create([
+                    "user_id" => $user->id,
+                    "amount" => 10,
+                ]);
+            }
         }
 
         // Can only pay for tax filings that don't a successful or pending payment

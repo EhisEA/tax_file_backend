@@ -11,6 +11,7 @@ use App\Http\Controllers\UploadFileController;
 use App\Http\Controllers\UserAuthController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\ReferralController;
 use App\Http\Controllers\UserProfileController;
 use App\Http\Resources\UserResource;
 use Illuminate\Http\Request;
@@ -83,7 +84,6 @@ Route::middleware("auth:sanctum")->group(function () {
             Route::put("/", "markAllAsRead")->name("read.all");
             Route::put("/{notification}", "markAsRead")->name("read.one");
 
-
             Route::delete("/{notification}", "delete")->name("delete");
         });
 
@@ -122,5 +122,13 @@ Route::middleware("auth:sanctum")->group(function () {
 
             Route::get("/", "index")->name("index");
             Route::get("/{payment}", "show")->name("show");
+        });
+
+    Route::prefix("referral")
+        ->name("referral.")
+        ->controller(ReferralController::class)
+        ->group(function () {
+            Route::get("/referrals", "index")->name("index");
+            Route::get("/referrals/code", "generateCode")->name("generate");
         });
 });

@@ -17,9 +17,9 @@ return new class extends Migration {
             $table->string("invoice_id");
             $table->string("stripe_payment_intent_id")->nullable();
 
-            $table->decimal("total");
-            $table->decimal("charged_amount");
-            $table->decimal("discount")->default(0);
+            $table->float("total");
+            $table->float("charged_amount");
+            $table->float("discount")->default(0);
             $table->string("status")->default(PaymentStatus::PENDING->value);
 
             $table->foreignId("user_id")->constrained("users");
