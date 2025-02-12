@@ -14,7 +14,7 @@ use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
 
 /**
- * 
+ *
  *
  * @property int $id
  * @property string $email
@@ -60,7 +60,7 @@ class User extends Authenticatable
     /** @use HasFactory<UserFactory> */
     use HasApiTokens, HasFactory, HasRoles, Notifiable;
 
-    protected $fillable = ["phone_number", "email", "password"];
+    protected $fillable = ["phone_number", "email", "password", "referral_code"];
 
     protected $hidden = ["password", "remember_token"];
 
@@ -93,5 +93,15 @@ class User extends Authenticatable
     public function tax_filings(): HasMany
     {
         return $this->hasMany(TaxFiling::class);
+    }
+
+    public function referrals()
+    {
+        return $this->hasMany(Referral::class);
+    }
+
+    public function referral_wallet()
+    {
+        return $this->hasMany(ReferralWallet::class);
     }
 }
