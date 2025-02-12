@@ -124,11 +124,11 @@ Route::middleware("auth:sanctum")->group(function () {
             Route::get("/{payment}", "show")->name("show");
         });
 
-    Route::prefix("referral")
+    Route::prefix("referrals")
         ->name("referral.")
         ->controller(ReferralController::class)
         ->group(function () {
-            Route::get("/referrals", "index")->name("index");
-            Route::get("/referrals/code", "generateCode")->name("generate");
+            Route::get("/", "index")->name("index");
+            Route::get("/code", "code")->name("generate");
         });
 });
