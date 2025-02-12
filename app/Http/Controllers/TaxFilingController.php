@@ -16,6 +16,7 @@ use App\Models\TaxDocumentKind;
 use App\Models\TaxFiling;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
@@ -27,9 +28,9 @@ class TaxFilingController extends Controller
     public function index(Request $request)
     {
         /* @var User $user */
-        $user = $request->user();
+        $user = Auth::user();
 
-        $filings = $user->tax_filings()->get();
+        $filings = $user->tax_filings()->paginate();
 
         return new TaxFilingCollection($filings);
     }

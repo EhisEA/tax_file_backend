@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use App\Http\Controllers\AccountantAuthController;
 use App\Http\Controllers\AccountantKYCController;
 use App\Http\Controllers\EmailVerificationController;
@@ -8,9 +10,11 @@ use App\Http\Controllers\TaxFilingController;
 use App\Http\Controllers\UploadFileController;
 use App\Http\Controllers\UserAuthController;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\UserProfileController;
 use App\Http\Resources\UserResource;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
 
 /* Helper route to get a user */
@@ -20,142 +24,102 @@ Route::get("/user", function (Request $request) {
 
 Route::name("auth.")
     ->prefix("auth")
+    ->controller(UserAuthController::class)
     ->group(function () {
         Route::name("user.")->group(function () {
-            Route::post("/register", [
-                UserAuthController::class,
-                "register",
-            ])->name("register");
-
-            Route::post("/login", [UserAuthController::class, "login"])->name(
-                "login"
-            );
+            Route::post("/register", "register")->name("register");
+            Route::post("/login", "login")->name("login");
         });
 
-        Route::name("accountant.")->group(function () {
-            Route::post("/accountant/register", [
-                AccountantAuthController::class,
-                "register",
-            ])->name("register");
+        Route::prefix("accountant")
+            ->name("accountant.")
+            ->controller(AccountantAuthController::class)
+            ->group(function () {
+                Route::post("/register", "register")->name("register");
+                Route::post("/login", "login")->name("login");
+            });
 
-            Route::post("/accountant/login", [
-                AccountantAuthController::class,
-                "login",
-            ])->name("login");
-        });
-
-        Route::name("password.reset.")->group(function () {
-            Route::post("/password-reset", [
-                PasswordResetController::class,
-                "sendEmail",
-            ])->name("send");
-
-            Route::post("/password-reset/verify", [
-                PasswordResetController::class,
-                "verifyCode",
-            ])->name("verify");
-        });
+        Route::prefix("password-reset")
+            ->name("password.reset.")
+            ->controller(PasswordResetController::class)
+            ->group(function () {
+                Route::post("/", "sendEmail")->name("send");
+                Route::post("/verify", "verifyCode")->name("verify");
+            });
     });
 
 Route::middleware("auth:sanctum")->group(function () {
-    Route::post("/accountant/kyc", AccountantKYCController::class)->name(
-        "accountant.kyc"
-    );
-
     Route::post("/media/upload", UploadFileController::class)->name(
         "media.upload"
     );
 
-    Route::name("auth.email.verification.")
-        ->prefix("auth")
-        ->group(function () {
-            Route::get("/email/verify", [
-                EmailVerificationController::class,
-                "sendEmail",
-            ])->name("send");
+    Route::post("/accountant/kyc", AccountantKYCController::class)->name(
+        "accountant.kyc"
+    );
 
-            Route::post("/email/verify", [
-                EmailVerificationController::class,
-                "verify",
-            ])->name("verify");
+    Route::prefix("auth/email")
+        ->name("auth.email.verification.")
+        ->controller(EmailVerificationController::class)
+        ->group(function () {
+            Route::get("/verify", "sendEmail")->name("send");
+            Route::post("/verify", "verify")->name("verify");
         });
 
-    Route::name("user.profile.")->group(function () {
-        Route::post("/profile/user", [
-            UserProfileController::class,
-            "store",
-        ])->name("store");
+    Route::prefix("profile")
+        ->name("user.profile.")
+        ->controller(UserProfileController::class)
+        ->group(function () {
+            Route::post("/user", "store")->name("store");
+            Route::post("/update", "update")->name("update");
+        });
 
-        Route::post("/profile/update", [
-            UserProfileController::class,
-            "update",
-        ])->name("update");
-    });
+    Route::prefix("notifications")
+        ->name("notifications.")
+        ->controller(NotificationController::class)
+        ->group(function () {
+            Route::get("/", "index")->name("index");
+            Route::get("/{notification}", "show")->name("show");
 
-    Route::name("notifications.")->group(function () {
-        Route::get("/notifications", [
-            NotificationController::class,
-            "index",
-        ])->name("index");
+            Route::put("/", "markAllAsRead")->name("read.all");
+            Route::put("/{notification}", "markAsRead")->name("read.one");
 
-        Route::get("/notifications/{notification}", [
-            NotificationController::class,
-            "show",
-        ])->name("show");
+            Route::delete("/{notification}", "delete")->name("delete");
+        });
 
-        Route::put("/notifications", [
-            NotificationController::class,
-            "markAllAsRead",
-        ])->name("read.all");
+    Route::prefix("tax/file")
+        ->name("tax.file.")
+        ->controller(TaxFilingController::class)
+        ->group(function () {
+            Route::get("/", "index")->name("index");
+            Route::get("/{filing_id}", "show")->name("show");
 
-        Route::put("/notifications/{notification}", [
-            NotificationController::class,
-            "markAsRead",
-        ])->name("read.single");
+            Route::post("/", "submit")->name("submit");
 
-        Route::delete("/notifications/{notification}", [
-            NotificationController::class,
-            "delete",
-        ])->name("delete");
+            Route::post("/draft", "storeDraft")->name("store.draft");
 
-        Route::delete("/notifications", [
-            NotificationController::class,
-            "deleteMany",
-        ])->name("delete.many");
-    });
+            Route::post("/draft/{tax_filing}", "submitDraft")->name(
+                "submit.draft"
+            );
 
-    Route::name("tax.file.")->group(function () {
-        Route::get("/tax/documents", [
-            TaxFilingController::class,
-            "getDocumentKinds",
-        ])->name("documents");
+            Route::put("/draft/{tax_filing}", "updateDraft")->name(
+                "update.draft"
+            );
+        });
 
-        Route::get("/tax/file", [TaxFilingController::class, "index"])->name(
-            "index"
-        );
+    Route::get("/tax/documents", [
+        TaxFilingController::class,
+        "getDocumentKinds",
+    ])->name("tax.documents");
 
-        Route::get("/tax/file/{filing_id}", [
-            TaxFilingController::class,
-            "show",
-        ])->name("show");
+    Route::prefix("payments")
+        ->name("payment.")
+        ->controller(PaymentController::class)
+        ->group(function () {
+            Route::post("/{taxFiling}", "initialise")->name("init");
+            Route::post("/complete", "complete")->name("complete");
+            Route::post("/confirm/{payment}", "confirm")->name("confirm");
 
-        Route::post("/tax/file", [TaxFilingController::class, "submit"])->name(
-            "submit"
-        );
-
-        Route::post("/tax/file/draft", [
-            TaxFilingController::class,
-            "storeDraft",
-        ])->name("store.draft");
-
-        Route::post("/tax/file/draft/{tax_filing}", [
-            TaxFilingController::class,
-            "submitDraft",
-        ])->name("submit.draft");
-
-        Route::put("/tax/file/draft/{tax_filing}", [
-            TaxFilingController::class,
-            "updateDraft",
-        ])->name("update.draft");
-    });
+            Route::get("/", "index")->name("index");
+            Route::get("/{payment}", "show")->name("show");
+        });
 });

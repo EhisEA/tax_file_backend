@@ -66,6 +66,7 @@ class TaxFilingResource extends JsonResource
             "documents" => new TaxDocumentCollection($this["documents"]),
             "updated_at" => $this["updated_at"],
             "created_at" => $this["created_at"],
+            // TODO: an is_paid field that uses the first successful payment
         ];
     }
 }

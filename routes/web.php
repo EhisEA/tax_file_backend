@@ -2,8 +2,12 @@
 
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
-Route::get('/', function () {
-    Log::info("unreachable");
-    return view('welcome');
+Route::get("/", function () {
+    throw new NotFoundHttpException();
 });
+
+Route::get("/login", function () {
+    return response()->json(["message" => "unauthenticated"], 401);
+})->name("login");

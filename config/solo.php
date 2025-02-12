@@ -48,15 +48,16 @@ return [
     "commands" => [
         // 'About' => 'php artisan solo:about',
         "Logs" => EnhancedTailCommand::file(storage_path("logs/laravel.log")),
-        // "Vite" => "npm run dev",
         "Make" => new MakeCommand(),
         "HTTP" => "php artisan serve",
+        "Mailpit" => "mailpit -v",
+        // "Vite" => "npm run dev",
 
         // Lazy commands do no automatically start when Solo starts.
         "Queue" => Command::from("php artisan queue:work")->lazy(),
         "Dumps" => Command::from("php artisan solo:dumps")->lazy(),
         "Reverb" => Command::from("php artisan reverb")->lazy(),
-        "mailpit" => Command::from("mailpit -v")->lazy(),
+        // "mailpit" => Command::from("mailpit -v")->lazy(),
         "Pint" => Command::from("./vendor/bin/pint --ansi")->lazy(),
         "Tests" => Command::from("php artisan test --colors=always")->lazy(),
     ],
