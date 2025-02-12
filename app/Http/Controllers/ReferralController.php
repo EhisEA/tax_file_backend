@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\ReferralCollection;
+use App\Http\Resources\ReferralResource;
 use App\Models\Referral;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -20,7 +22,7 @@ class ReferralController extends Controller
         }
 
         return response()->json([
-            "referral code" => $user->referral_code,
+            "referral_code" => $user->referral_code,
             "invite_link" =>
                 route("auth.user.register") .
                 "?referral_code=" .
@@ -32,23 +34,10 @@ class ReferralController extends Controller
     public function index(Request $request)
     {
         $user = $request->user();
-        $user_referrals = Referral::with("user.profile")
+        $userReferrals = Referral::with("user.profile")
             ->where("referrer_id", $user->id)
-            ->get();
+            ->paginate();
 
-        $user_referrals = $user_referrals->map(function ($referral) {
-            $profile = $referral->user->profile;
-            $referral->referree_details = [
-                "first_name" => $profile->first_name ?? null,
-                "middle_name" => $profile->middle_name ?? null,
-                "last_name" => $profile->last_name ?? null,
-                "email" => $referral->user->email ?? null,
-            ];
-            unset($referral->user);
-            unset($referral->profile);
-            return $referral;
-        });
-
-        return response()->json(["user_referrals" => $user_referrals]);
+        return new ReferralCollection($userReferrals);
     }
 }
