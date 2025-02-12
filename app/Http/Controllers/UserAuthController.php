@@ -39,13 +39,16 @@ class UserAuthController extends Controller
             "phone_number" => ["required"],
             "password" => ["required", Password::min(8)],
 
-            'referral_code' => 'nullable|string|exists:users,referral_code'
+            "referral_code" => "nullable|string|exists:users,referral_code",
         ]);
 
         // Check if the user has a valid referral code
         $referrer = null;
-        if ($request->has('referral_code')) {
-            $referrer = User::where('referral_code', $request->referral_code)->first();
+        if ($request->has("referral_code")) {
+            $referrer = User::where(
+                "referral_code",
+                $request->referral_code
+            )->first();
         }
 
         DB::beginTransaction();
@@ -64,24 +67,11 @@ class UserAuthController extends Controller
         $user->profile()->associate($profile);
         $user->save();
 
-
         if ($referrer) {
             Referral::create([
-                'referrer_id' => $referrer->id,
-                'referree_id' => $user->id
-             ]);
-
-            // $referrer_wallet = ReferralWallet::where('user_id', $referrer->id)->first();
-            // if ($referrer_wallet) {
-            //     $referrer_wallet->increment('amount', 10);
-            // }else{
-            //     ReferralWallet::create([
-            //         'user_id' => $referrer->id,
-            //         'amount' => 10
-            //     ]);
-
-            // }
-
+                "referrer_id" => $referrer->id,
+                "referree_id" => $user->id,
+            ]);
         }
 
         $token = $user->createToken(Str::random(10));
