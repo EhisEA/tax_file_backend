@@ -20,6 +20,7 @@ class ReferralResource extends JsonResource
             "status" =>
                 $this["tax_filed_at"] === null ? "In progress" : "Completed",
             "created_at" => $this["created_at"],
+            "amount_earned" => 100,
             "referree_id" => $this["referree_id"],
             "referree_name" => $this->whenLoaded("user.profile")
                 ? $this["user"]["profile"]["first_name"] .
