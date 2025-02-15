@@ -84,7 +84,7 @@ Route::middleware("auth:sanctum")->group(function () {
             Route::put("/", "markAllAsRead")->name("read.all");
             Route::put("/{notification}", "markAsRead")->name("read.one");
 
-            Route::delete("/{notification}", "delete")->name("delete");
+            Route::delete("/", "delete")->name("delete");
         });
 
     Route::prefix("tax/file")
