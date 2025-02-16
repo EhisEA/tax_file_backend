@@ -19,12 +19,11 @@ class UploadFileAction
 
     /**
      * @throws FailedToUploadException* @return File
-
      */
     public function execute(string|false|null $path): File
     {
-        if (!$path) {
-            throw new FailedToUploadException();
+        if (! $path) {
+            throw new FailedToUploadException;
         }
 
         try {
@@ -32,10 +31,10 @@ class UploadFileAction
             $file_upload = cloudinary()->upload($path);
 
             return File::query()->create([
-                "file_url" => $file_upload->getSecurePath(),
-                "file_name" => $file_upload->getFileName(),
-                "file_type" => $file_upload->getFileType(),
-                "file_size" => $file_upload->getSize(),
+                'file_url' => $file_upload->getSecurePath(),
+                'file_name' => $file_upload->getFileName(),
+                'file_type' => $file_upload->getFileType(),
+                'file_size' => $file_upload->getSize(),
             ]);
         } catch (ApiError $exception) {
             throw new FailedToUploadException(previous: $exception);

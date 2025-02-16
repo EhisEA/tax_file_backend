@@ -12,7 +12,7 @@ class FailedToUploadException extends Exception
     {
         return response()->json([
             'status' => false,
-            'message' => 'Failed to upload image'
+            'message' => 'Failed to upload image',
         ], 422);
     }
 }

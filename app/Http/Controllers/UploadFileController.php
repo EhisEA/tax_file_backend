@@ -17,10 +17,10 @@ class UploadFileController extends Controller
         UploadFileAction $action
     ): FileResource {
         $request->validate([
-            "file" => ["required", "file"],
+            'file' => ['required', 'file'],
         ]);
 
-        $file = $action->execute($request->file("file"));
+        $file = $action->execute($request->file('file'));
 
         return new FileResource($file);
     }

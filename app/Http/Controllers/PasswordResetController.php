@@ -12,7 +12,6 @@ use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Validation\Rules\Password;
 
@@ -51,7 +50,7 @@ class PasswordResetController extends Controller
         $request->validate([
             'code' => ['required'],
             'email' => ['required', 'email'],
-            'password' => ['required', Password::min(8)]
+            'password' => ['required', Password::min(8)],
         ]);
 
         $user = User::query()->where('email', $request->string('email'))->first();
@@ -73,7 +72,7 @@ class PasswordResetController extends Controller
         $user->password = Hash::make($request->string('password')->toString());
         $user->save();
 
-        $user->notify(new PasswordResetNotification());
+        $user->notify(new PasswordResetNotification);
 
         return response()->json([
             'message' => 'password reset successfully',

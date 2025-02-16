@@ -21,8 +21,7 @@ class EmailVerification extends Mailable
      */
     public function __construct(
         public VerificationCode $verification_code
-    )
-    {
+    ) {
         //
     }
 

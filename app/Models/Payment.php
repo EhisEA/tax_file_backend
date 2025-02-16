@@ -4,14 +4,10 @@ namespace App\Models;
 
 use App\Enums\PaymentStatus;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Str;
 
 /**
- * 
- *
  * @property string $id
  * @property string $invoice_id
  * @property string|null $stripe_payment_intent_id
@@ -26,6 +22,7 @@ use Str;
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \App\Models\TaxFiling|null $taxFilings
  * @property-read \App\Models\User $user
+ *
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Payment newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Payment newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Payment query()
@@ -41,6 +38,7 @@ use Str;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Payment whereTotal($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Payment whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Payment whereUserId($value)
+ *
  * @mixin \Eloquent
  */
 class Payment extends Model
@@ -48,20 +46,20 @@ class Payment extends Model
     use HasUlids;
 
     protected $fillable = [
-        "invoice_id",
-        "total",
-        "discount",
-        "charged_amount",
-        "status",
-        "user_id",
-        "stripe_payment_intent_id",
-        "completed_at",
+        'invoice_id',
+        'total',
+        'discount',
+        'charged_amount',
+        'status',
+        'user_id',
+        'stripe_payment_intent_id',
+        'completed_at',
     ];
 
     protected function casts()
     {
         return [
-            "status" => PaymentStatus::class,
+            'status' => PaymentStatus::class,
         ];
     }
 

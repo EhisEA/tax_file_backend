@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Events\Registered;
 use App\Http\Resources\UserResource;
-use App\Models\AccountantInformation;
 use App\Models\AccountantProfile;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
@@ -69,6 +68,7 @@ class AccountantAuthController extends Controller
             }
 
             $token = $user->createToken(Str::random(10));
+
             return (new UserResource($user))->additional([
                 'token' => $token->plainTextToken,
             ]);

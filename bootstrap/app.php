@@ -8,20 +8,20 @@ use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
-        web: __DIR__ . "/../routes/web.php",
-        api: __DIR__ . "/../routes/api.php",
-        commands: __DIR__ . "/../routes/console.php",
-        health: "/up"
+        web: __DIR__.'/../routes/web.php',
+        api: __DIR__.'/../routes/api.php',
+        commands: __DIR__.'/../routes/console.php',
+        health: '/up'
     )
     ->withMiddleware(function (Middleware $middleware) {
-        $middleware->validateCsrfTokens(except: ["stripe/*"]);
+        $middleware->validateCsrfTokens(except: ['stripe/*']);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         $exceptions->shouldRenderJsonWhen(function (
             Request $request,
             Throwable $e
         ) {
-            if ($request->is("api/*")) {
+            if ($request->is('api/*')) {
                 return true;
             }
 
@@ -32,10 +32,10 @@ return Application::configure(basePath: dirname(__DIR__))
             AccessDeniedHttpException $exception,
             Request $request
         ) {
-            if ($request->is("api/*")) {
+            if ($request->is('api/*')) {
                 return response()->json(
                     [
-                        "message" => "This action is unauthorized",
+                        'message' => 'This action is unauthorized',
                     ],
                     403
                 );
@@ -43,10 +43,10 @@ return Application::configure(basePath: dirname(__DIR__))
         });
 
         $exceptions->render(function (TypeError $exception, Request $request) {
-            if ($request->is("api/*")) {
+            if ($request->is('api/*')) {
                 return response()->json(
                     [
-                        "message" => "Internal Server Error",
+                        'message' => 'Internal Server Error',
                     ],
                     500
                 );

@@ -3,7 +3,6 @@
 namespace Database\Seeders;
 
 use App\Enums\PaymentStatus;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
@@ -16,9 +15,9 @@ class PaymentStatusSeeder extends Seeder
     {
         $paymentStatuses = [];
         foreach (PaymentStatus::cases() as $status) {
-            $paymentStatuses[] = ["name" => $status->value];
+            $paymentStatuses[] = ['name' => $status->value];
         }
 
-        DB::table("payment_status")->insertOrIgnore($paymentStatuses);
+        DB::table('payment_status')->insertOrIgnore($paymentStatuses);
     }
 }

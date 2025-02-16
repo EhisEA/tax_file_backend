@@ -16,13 +16,13 @@ class UserResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            "id" => $this["id"],
-            "email" => $this["email"],
-            "is_verified" => $this["email_verified_at"] !== null,
-            "profile" => $this->whenLoaded("profile")
-                ? ($this["profile"] instanceof UserProfile
-                    ? new UserProfileResource($this["profile"])
-                    : new AccountantProfileResource($this["profile"]))
+            'id' => $this['id'],
+            'email' => $this['email'],
+            'is_verified' => $this['email_verified_at'] !== null,
+            'profile' => $this->whenLoaded('profile')
+                ? ($this['profile'] instanceof UserProfile
+                    ? new UserProfileResource($this['profile'])
+                    : new AccountantProfileResource($this['profile']))
                 : null,
         ];
     }

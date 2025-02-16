@@ -1,43 +1,44 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Actions;
 
+use App\Data\TaxFilingData;
 use App\Models\TaxFiling;
-use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
+use Spatie\LaravelData\Optional;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class SubmitTaxFilingAction
 {
     /**
      * Create a new class instance.
      */
-    public function __construct()
-    {
-        //
-    }
+    public function __construct() {}
 
-    /**
-     * @return TaxFiling
-     * @param array $data
-     */
-    public function execute(array $data): TaxFiling
+    public function execute(TaxFilingData $data): TaxFiling
     {
-        /* @var User $user */
         $user = Auth::user();
+
+        // make sure filing year is set since this validation
+        // is not done for drafts
+        if ($data->filing_year instanceof Optional) {
+            throw new BadRequestHttpException('filing_year is required');
+        }
+
+        $createQuery = $data->except('documents', 'draft');
+        if ($data->draft === false) {
+            $data->submitted_at = now();
+        }
 
         DB::beginTransaction();
 
-        $tax_filing = $user->tax_filings()->create(
-            collect($data)
-                ->except("documents")
-                ->merge(["submitted_at" => Carbon::today()])
-                ->toArray()
-        );
+        $tax_filing = $user->tax_filings()->create($createQuery->toArray());
 
         $tax_documents = app(MakeTaxDocumentsAction::class)->execute(
-            $data["documents"]
+            $data->documents
         );
 
         $tax_filing->documents()->createMany($tax_documents);

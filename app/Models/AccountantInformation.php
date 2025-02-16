@@ -6,8 +6,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
- * 
- *
  * @property int $id
  * @property int $profile_id
  * @property string $first_name
@@ -41,6 +39,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property-read \App\Models\File|null $proof_of_address
  * @property-read \App\Models\File|null $proof_of_business_registration
  * @property-read \App\Models\File|null $proof_of_identity
+ *
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AccountantInformation newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AccountantInformation newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AccountantInformation query()
@@ -71,6 +70,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AccountantInformation whereSocialSecurityNumber($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AccountantInformation whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AccountantInformation whereYearsOfExperience($value)
+ *
  * @mixin \Eloquent
  */
 class AccountantInformation extends Model
@@ -88,7 +88,7 @@ class AccountantInformation extends Model
         'proof_of_identity',
         'proof_of_address',
         'professional_qualification_document',
-        'proof_of_business_registration'
+        'proof_of_business_registration',
     ];
 
     public function profile(): BelongsTo

@@ -11,8 +11,6 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
 /**
- * 
- *
  * @property int $id
  * @property int $filing_year
  * @property string|null $employment_status
@@ -54,6 +52,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
  * @property-read \App\Models\Payment|null $pendingPayment
  * @property-read \App\Models\Payment|null $successfulPayment
  * @property-read \App\Models\User $user
+ *
  * @method static Builder<static>|TaxFiling newModelQuery()
  * @method static Builder<static>|TaxFiling newQuery()
  * @method static Builder<static>|TaxFiling query()
@@ -91,13 +90,14 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
  * @method static Builder<static>|TaxFiling whereUpdatedAt($value)
  * @method static Builder<static>|TaxFiling whereUserId($value)
  * @method static Builder<static>|TaxFiling whereWasResidentOfCanadaForTaxYear($value)
+ *
  * @mixin \Eloquent
  */
 class TaxFiling extends Model
 {
     protected $guarded = [];
 
-    protected $with = ["documents"];
+    protected $with = ['documents'];
 
     /**
      * @return BelongsTo<User,TaxFiling>
@@ -130,10 +130,10 @@ class TaxFiling extends Model
     {
         return $this->payments()
             ->one()
-            ->ofMany(["invoice_id" => "max", "updated_at" => "max"], function (
+            ->ofMany(['invoice_id' => 'max', 'updated_at' => 'max'], function (
                 Builder $query
             ) {
-                $query->where("status", "=", PaymentStatus::COMPLETED->value);
+                $query->where('status', '=', PaymentStatus::COMPLETED->value);
             });
     }
 
@@ -144,8 +144,8 @@ class TaxFiling extends Model
     {
         return $this->payments()
             ->one()
-            ->ofMany(["updated_at" => "max"], function (Builder $query) {
-                $query->where("status", "=", PaymentStatus::PENDING->value);
+            ->ofMany(['updated_at' => 'max'], function (Builder $query) {
+                $query->where('status', '=', PaymentStatus::PENDING->value);
             });
     }
 }

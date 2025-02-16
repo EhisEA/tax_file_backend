@@ -4,7 +4,6 @@ namespace App\Actions;
 
 use App\Models\Referral;
 use App\Models\ReferralWallet;
-use App\Models\User;
 
 class AddUserReferralBonusAction
 {
@@ -28,8 +27,8 @@ class AddUserReferralBonusAction
 
         if ($wallet === null) {
             ReferralWallet::query()->create([
-                "user_id" => $referral->referrer_id,
-                "amount" => 5,
+                'user_id' => $referral->referrer_id,
+                'amount' => 5,
             ]);
         } else {
             $wallet->amount += 5;

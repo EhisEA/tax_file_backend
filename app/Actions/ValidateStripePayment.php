@@ -7,7 +7,6 @@ use App\Enums\StripePaymentStatusEnum;
 use App\Models\Payment;
 use App\Models\ReferralWallet;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 use Laravel\Cashier\Payment as CashierPayment;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
@@ -39,8 +38,8 @@ class ValidateStripePayment
             DB::beginTransaction();
 
             $payment->update([
-                "status" => PaymentStatus::COMPLETED,
-                "completed_at" => now(),
+                'status' => PaymentStatus::COMPLETED,
+                'completed_at' => now(),
             ]);
 
             if ($payment->discount > 0) {
@@ -54,8 +53,8 @@ class ValidateStripePayment
                     $wallet->save();
                 } else {
                     ReferralWallet::create([
-                        "user_id" => $payment->user_id,
-                        "amount" => 10,
+                        'user_id' => $payment->user_id,
+                        'amount' => 10,
                     ]);
                 }
             }
@@ -69,7 +68,7 @@ class ValidateStripePayment
 
         if ($paymentIntent->isCanceled()) {
             $payment->update([
-                "status" => PaymentStatus::FAILED,
+                'status' => PaymentStatus::FAILED,
             ]);
 
             return StripePaymentStatusEnum::FAILED;
@@ -77,7 +76,7 @@ class ValidateStripePayment
 
         throw new HttpException(
             statusCode: 500,
-            message: "unknown stripe payment status"
+            message: 'unknown stripe payment status'
         );
     }
 }

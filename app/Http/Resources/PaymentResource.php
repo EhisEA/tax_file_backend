@@ -15,14 +15,14 @@ class PaymentResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            "id" => $this["id"],
-            "invoice_id" => $this["invoice_id"],
-            "total" => $this["total"],
-            "charged_amount" => $this["charged_amount"],
-            "discount" => $this["dicount"] ?? 0,
-            "status" => $this["status"],
-            "completed_at" => $this["completed_at"],
-            "created_at" => $this["created_at"],
+            'id' => $this['id'],
+            'invoice_id' => $this['invoice_id'],
+            'total' => $this['total'],
+            'charged_amount' => $this['charged_amount'],
+            'discount' => $this['dicount'] ?? 0,
+            'status' => $this['status'],
+            'completed_at' => $this['completed_at'],
+            'created_at' => $this['created_at'],
         ];
     }
 }

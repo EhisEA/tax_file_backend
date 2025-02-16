@@ -22,7 +22,7 @@ class UpdateUserProfileRequest extends FormRequest
         /* @var User $user */
         $user = $this->user();
 
-        if (!$user->hasVerifiedEmail()) {
+        if (! $user->hasVerifiedEmail()) {
             return false;
         }
 
@@ -41,8 +41,8 @@ class UpdateUserProfileRequest extends FormRequest
             'first_name' => ['string', 'nullable'],
             'middle_name' => ['string', 'nullable'],
             'last_name' => ['string', 'nullable'],
-            'date_of_birth' => ['date', 'before:' . Carbon::now()->subYears(18)
-                    ->ceilYear(), 'nullable'], // at least 18 years
+            'date_of_birth' => ['date', 'before:'.Carbon::now()->subYears(18)
+                ->ceilYear(), 'nullable'], // at least 18 years
             'social_insurance_number' => ['string', 'regex:/^\d{3}-\d{3}-\d{3}$/', 'nullable'],
             'gender' => [Rule::enum(GenderOptions::class), 'nullable'],
             'marital_status' => [Rule::enum(MaritalStatusOptions::class), 'nullable'],

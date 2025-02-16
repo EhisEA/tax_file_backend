@@ -2,23 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use App\Actions\SubmitTaxFilingAction;
-use App\Http\Resources\TaxFilingCollection;
 use App\Actions\MakeTaxDocumentsAction;
-use App\Actions\ValidateTaxFilingAction;
-use App\Exceptions\InvalidTaxFilingException;
-use App\Http\Requests\SubmitDraftTaxFilingRequest;
-use App\Http\Requests\SubmitTaxFilingRequest;
-use App\Http\Requests\UpdateDraftTaxFilingRequest;
+use App\Actions\SubmitTaxFilingAction;
+use App\Data\TaxFilingData;
+use App\Http\Resources\TaxFilingCollection;
 use App\Http\Resources\TaxFilingResource;
-use App\Models\TaxDocument;
 use App\Models\TaxDocumentKind;
 use App\Models\TaxFiling;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 
 class TaxFilingController extends Controller
 {
@@ -27,8 +21,13 @@ class TaxFilingController extends Controller
      */
     public function index(Request $request)
     {
-        /* @var User $user */
         $user = Auth::user();
+
+        if ($request->string('status') == 'draft') {
+            $draft = TaxFiling::whereUserId($user->id)->whereSubmittedAt(null)->paginate();
+
+            return new TaxFilingCollection($draft);
+        }
 
         $filings = $user->tax_filings()->paginate();
 
@@ -38,143 +37,78 @@ class TaxFilingController extends Controller
     /**
      * @return TaxFilingResource|JsonResponse
      */
-    public function show(Request $request, int $filing_id)
+    public function show(Request $request, TaxFiling $taxFiling)
     {
-        /* @var User $user */
-        $user = $request->user();
+        $user = Auth::user();
 
-        $user->load("tax_filings");
-
-        foreach ($user->tax_filings as $filing) {
-            if ($filing->id === $filing_id) {
-                return new TaxFilingResource($filing);
-            }
+        if ($taxFiling->user_id !== $user->id) {
+            return response()->json(['message' => 'Tax filing not found'], 404);
         }
 
-        return response()->json(["message" => "Tax filing not found"], 404);
+        return new TaxFilingResource($taxFiling);
     }
 
     public function submit(
-        SubmitTaxFilingRequest $request,
-        SubmitTaxFilingAction $submit_tax_filing_action
+        TaxFilingData $data,
+        SubmitTaxFilingAction $submitTaxFilingAction
     ): TaxFilingResource {
-        /* @var User $user */
-        $data = $request->validated();
-
-        $tax_filing = $submit_tax_filing_action->execute($data);
-
-        return new TaxFilingResource($tax_filing);
-    }
-
-    public function storeDraft(
-        SubmitDraftTaxFilingRequest $request,
-        MakeTaxDocumentsAction $make_tax_documents_action
-    ): TaxFilingResource {
-        /* @var User $user */
-        $user = $request->user();
-
-        $data = $request->validated();
-
-        DB::beginTransaction();
-
-        $create_query = collect($data)
-            ->except("documents")
-            ->filter(function ($value, $key) {
-                return !is_null($value);
-            });
-
-        $taxFiling = $user->tax_filings()->create($create_query->toArray());
-
-        if (isset($data["documents"])) {
-            $tax_documents = $make_tax_documents_action->execute(
-                $data["documents"]
-            );
-
-            $taxFiling->documents()->createMany($tax_documents);
-        }
-
-        DB::commit();
+        $taxFiling = $submitTaxFilingAction->execute($data);
 
         return new TaxFilingResource($taxFiling);
     }
 
     public function updateDraft(
-        UpdateDraftTaxFilingRequest $request,
-        TaxFiling $tax_filing,
-        MakeTaxDocumentsAction $make_tax_documents_action
+        Request $request,
+        TaxFiling $taxFiling,
+        MakeTaxDocumentsAction $makeTaxDocumentsAction
     ): TaxFilingResource {
-        $data = $request->validated();
-        $tax_filing->load("documents");
+        $data = TaxFilingData::validateAndCreate(array_merge($request->all(), ['draft' => true]));
+        $taxFiling->load('documents');
 
         DB::beginTransaction();
 
-        $update_query = collect($data)
-            ->except("documents")
-            ->filter(function ($value, $key) {
-                return !is_null($value);
-            });
+        $updateQuery = $data->except('documents', 'draft', 'filing_year');
+        $taxFiling->update($updateQuery->toArray());
 
-        $tax_filing->update($update_query->toArray());
-
-        if (isset($data["documents"])) {
-            Log::info("doc u ment");
-            $tax_documents = $make_tax_documents_action->execute(
-                $data["documents"]
+        if ($data->documents !== null) {
+            $documents = $makeTaxDocumentsAction->execute(
+                $data->documents
             );
 
-            $documents = collect();
-
-            foreach ($tax_documents as $document) {
-                $document_exists = $tax_filing->documents->first(function (
-                    TaxDocument $tax_document
-                ) use ($document) {
-                    return $tax_document->kind_id === $document["kind_id"] &&
-                        $tax_document->file_id === $document["file_id"];
-                });
-
-                if ($document_exists) {
-                    continue;
-                }
-
-                $documents->push($document);
-            }
-
-            $tax_filing->documents()->createMany($documents);
+            $taxFiling->documents()->delete();
+            $taxFiling->documents()->createMany($documents);
         }
 
         DB::commit();
 
-        return new TaxFilingResource($tax_filing->refresh());
+        return new TaxFilingResource($taxFiling->refresh());
     }
 
-    /**
-     * @throws InvalidTaxFilingException
-     */
-    public function submitDraft(
-        Request $request,
-        TaxFiling $taxFiling,
-        ValidateTaxFilingAction $validateTaxFilingAction
-    ): TaxFilingResource|JsonResponse {
-        /* @var User $user */
-        $user = $request->user();
+    public function submitDraft(TaxFiling $taxFiling): TaxFilingResource|JsonResponse
+    {
+        $user = Auth::user();
+        $user->load('tax_filings');
 
-        $user->load("tax_filings");
-
-        Log::info("hello");
-
-        if ($user->tax_filings->doesntContain($taxFiling)) {
-            return response()->json(["message" => "Tax filing not found"], 404);
+        if ($taxFiling->user_id !== $user->id) {
+            return response()->json(['message' => 'Tax filing not found'], 404);
         }
 
-        Log::info("hello1");
-        return new TaxFilingResource(
-            $validateTaxFilingAction->execute($taxFiling)
+        $getTaxDocuments = fn () => $taxFiling->documents->map(
+            fn ($document) => [
+                'name' => $document['kind']['name'],
+                'file_id' => $document['file']['id'],
+            ]);
+
+        TaxFilingData::validate(
+            array_merge($taxFiling->toArray(),
+                ['documents' => $getTaxDocuments()->toArray()])
         );
+
+        return new TaxFilingResource($taxFiling);
     }
 
     public function getDocumentKinds(): JsonResponse
     {
-        $kinds = TaxDocumentKind::all();
-        return response()->json($kinds);
+        return response()->json(TaxDocumentKind::all());
     }
 }

@@ -14,11 +14,11 @@ class StripeEventListener
 {
     public function handle(WebhookReceived $event): void
     {
-        Log::info("Stripe event recieved: " . $event->payload["type"]);
+        Log::info('Stripe event recieved: '.$event->payload['type']);
 
-        switch ($event->payload["type"]) {
-            case "payment_intent.succeeded":
-                $paymentIntentId = $event->payload["id"];
+        switch ($event->payload['type']) {
+            case 'payment_intent.succeeded':
+                $paymentIntentId = $event->payload['id'];
 
                 $payment = Payment::whereStatus(PaymentStatus::PENDING->value)
                     ->whereStripePaymentIntentId($paymentIntentId)
@@ -31,8 +31,8 @@ class StripeEventListener
                 DB::beginTransaction();
 
                 $payment->update([
-                    "status" => PaymentStatus::COMPLETED,
-                    "completed_at" => now(),
+                    'status' => PaymentStatus::COMPLETED,
+                    'completed_at' => now(),
                 ]);
 
                 $wallet = ReferralWallet::whereUserId(
@@ -44,8 +44,8 @@ class StripeEventListener
                     $wallet->save();
                 } else {
                     ReferralWallet::create([
-                        "user_id" => $payment->user_id,
-                        "amount" => 10,
+                        'user_id' => $payment->user_id,
+                        'amount' => 10,
                     ]);
                 }
 
@@ -56,8 +56,8 @@ class StripeEventListener
                 DB::commit();
 
                 break;
-            case "payment_intent.canceled":
-                $paymentIntentId = $event->payload["id"];
+            case 'payment_intent.canceled':
+                $paymentIntentId = $event->payload['id'];
 
                 $payment = Payment::whereStatus(PaymentStatus::PENDING->value)
                     ->whereStripePaymentIntentId($paymentIntentId)
@@ -67,7 +67,7 @@ class StripeEventListener
                     break;
                 }
 
-                $payment->update(["status" => PaymentStatus::FAILED]);
+                $payment->update(['status' => PaymentStatus::FAILED]);
                 break;
         }
     }

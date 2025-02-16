@@ -6,14 +6,17 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class PasswordResetNotification extends Notification
+class NewReferral extends Notification
 {
     use Queueable;
 
     /**
      * Create a new notification instance.
      */
-    public function __construct() {}
+    public function __construct()
+    {
+        //
+    }
 
     /**
      * Get the notification's delivery channels.
@@ -22,25 +25,18 @@ class PasswordResetNotification extends Notification
      */
     public function via(object $notifiable): array
     {
-        return ['database'];
+        return ['mail'];
     }
 
     /**
      * Get the mail representation of the notification.
      */
-    // public function toMail(object $notifiable): MailMessage
-    // {
-    //     return (new MailMessage)
-    //                 ->line('The introduction to the notification.')
-    //                 ->action('Notification Action', url('/'))
-    //                 ->line('Thank you for using our application!');
-    // }
-
-    public function toDatabase($notifiable): array
+    public function toMail(object $notifiable): MailMessage
     {
-        return [
-            //
-        ];
+        return (new MailMessage)
+            ->line('The introduction to the notification.')
+            ->action('Notification Action', url('/'))
+            ->line('Thank you for using our application!');
     }
 
     /**
@@ -53,10 +49,5 @@ class PasswordResetNotification extends Notification
         return [
             //
         ];
-    }
-
-    public function databaseType(object $notifiable): string
-    {
-        return 'password-reset';
     }
 }
