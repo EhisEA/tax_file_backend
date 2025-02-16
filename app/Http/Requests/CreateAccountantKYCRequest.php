@@ -20,7 +20,7 @@ class CreateAccountantKYCRequest extends FormRequest
         /* @var User $user */
         $user = $this->user();
 
-        if (!$user->hasVerifiedEmail()) {
+        if (! $user->hasVerifiedEmail()) {
             return false;
         }
 

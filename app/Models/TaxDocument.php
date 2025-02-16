@@ -6,8 +6,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
- * 
- *
  * @property int $id
  * @property int $kind_id
  * @property int $tax_filing_id
@@ -15,6 +13,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property-read \App\Models\File $file
  * @property-read \App\Models\TaxDocumentKind $kind
  * @property-read \App\Models\TaxFiling $taxFiling
+ *
  * @method static \Illuminate\Database\Eloquent\Builder<static>|TaxDocument newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|TaxDocument newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|TaxDocument query()
@@ -22,18 +21,20 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|TaxDocument whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|TaxDocument whereKindId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|TaxDocument whereTaxFilingId($value)
+ *
  * @mixin \Eloquent
  */
 class TaxDocument extends Model
 {
     public $timestamps = false;
 
-    protected $with = ["kind", "file"];
-    protected $fillable = ["kind_id", "file_id"];
+    protected $with = ['kind', 'file'];
+
+    protected $fillable = ['kind_id', 'file_id'];
 
     public function kind(): BelongsTo
     {
-        return $this->belongsTo(TaxDocumentKind::class, "kind_id");
+        return $this->belongsTo(TaxDocumentKind::class, 'kind_id');
     }
 
     public function file(): BelongsTo

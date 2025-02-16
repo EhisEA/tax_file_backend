@@ -2,10 +2,10 @@
 
 namespace App\Actions;
 
+use App\Data\TaxDocumentData;
 use App\Models\File;
 use App\Models\TaxDocumentKind;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Log;
 
 class MakeTaxDocumentsAction
 {
@@ -18,27 +18,25 @@ class MakeTaxDocumentsAction
     }
 
     /**
+     * @param  array<int, TaxDocumentData>  $documents
      * @return Collection<int, array<string, int>>
-     * @param array $documents
      */
     public function execute(array $documents): Collection
     {
         $tax_documents = collect();
 
-        Log::info("creating document");
         foreach ($documents as $document) {
-            $file = File::whereId($document["file_id"])->sole();
+            $file = File::whereId($document->file_id)->sole();
 
             $document_kind = TaxDocumentKind::whereName(
-                $document["name"]
+                $document->name
             )->sole();
 
             $tax_documents->push([
-                "kind_id" => $document_kind->id,
-                "file_id" => $file->id,
+                'kind_id' => $document_kind->id,
+                'file_id' => $file->id,
             ]);
         }
-        Log::info("documents created");
 
         return $tax_documents;
     }

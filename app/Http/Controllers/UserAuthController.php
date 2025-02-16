@@ -7,7 +7,6 @@ namespace App\Http\Controllers;
 use App\Events\Registered;
 use App\Http\Resources\UserResource;
 use App\Models\Referral;
-use App\Models\ReferralWallet;
 use App\Models\User;
 use App\Models\UserProfile;
 use Illuminate\Http\JsonResponse;
@@ -21,32 +20,30 @@ use Illuminate\Validation\Rules\Password;
 
 /**
  * User Authentication
- *
  */
 class UserAuthController extends Controller
 {
     /**
      * Create and register a user account
-     *
      */
     public function register(Request $request): UserResource
     {
         $data = $request->validate([
-            "first_name" => ["required", "string", "max:255"],
-            "last_name" => ["required", "string", "max:255"],
-            "email" => ["email", "required", "unique:users"],
+            'first_name' => ['required', 'string', 'max:255'],
+            'last_name' => ['required', 'string', 'max:255'],
+            'email' => ['email', 'required', 'unique:users'],
             // TODO: better phone number validation (and also in form requests)
-            "phone_number" => ["required"],
-            "password" => ["required", Password::min(8)],
+            'phone_number' => ['required'],
+            'password' => ['required', Password::min(8)],
 
-            "referral_code" => "nullable|string|exists:users,referral_code",
+            'referral_code' => 'nullable|string|exists:users,referral_code',
         ]);
 
         // Check if the user has a valid referral code
         $referrer = null;
-        if ($request->has("referral_code")) {
+        if ($request->has('referral_code')) {
             $referrer = User::where(
-                "referral_code",
+                'referral_code',
                 $request->referral_code
             )->first();
         }
@@ -54,14 +51,14 @@ class UserAuthController extends Controller
         DB::beginTransaction();
 
         $user = User::query()->create([
-            "email" => $data["email"],
-            "password" => Hash::make($data["password"]),
+            'email' => $data['email'],
+            'password' => Hash::make($data['password']),
         ]);
 
         $profile = UserProfile::query()->create([
-            "phone_number" => $data["phone_number"],
-            "first_name" => $data["first_name"],
-            "last_name" => $data["last_name"],
+            'phone_number' => $data['phone_number'],
+            'first_name' => $data['first_name'],
+            'last_name' => $data['last_name'],
         ]);
 
         $user->profile()->associate($profile);
@@ -69,8 +66,8 @@ class UserAuthController extends Controller
 
         if ($referrer) {
             Referral::create([
-                "referrer_id" => $referrer->id,
-                "referree_id" => $user->id,
+                'referrer_id' => $referrer->id,
+                'referree_id' => $user->id,
             ]);
         }
 
@@ -80,47 +77,47 @@ class UserAuthController extends Controller
 
         Registered::dispatch($user);
 
-        $user->load("profile");
+        $user->load('profile');
         Log::info($user->profile);
 
         return (new UserResource($user))->additional([
-            "token" => $token->plainTextToken,
+            'token' => $token->plainTextToken,
         ]);
     }
 
     /**
      * Login to a user account
-     *
      */
     public function login(Request $request): UserResource|JsonResponse
     {
         $data = $request->validate([
-            "email" => ["email", "required"],
-            "password" => ["required"],
+            'email' => ['email', 'required'],
+            'password' => ['required'],
         ]);
 
         if (Auth::attempt($data)) {
             /* @var User $user */
-            $user = User::query()->where("email", $data["email"])->sole();
+            $user = User::query()->where('email', $data['email'])->sole();
 
             if ($user->profile instanceof UserProfile === false) {
                 return response()->json(
                     [
-                        "message" => "invalid login credentials",
+                        'message' => 'invalid login credentials',
                     ],
                     422
                 );
             }
 
             $token = $user->createToken(Str::random(10));
+
             return (new UserResource($user))->additional([
-                "token" => $token->plainTextToken,
+                'token' => $token->plainTextToken,
             ]);
         }
 
         return response()->json(
             [
-                "message" => "invalid login credentials",
+                'message' => 'invalid login credentials',
             ],
             422
         );

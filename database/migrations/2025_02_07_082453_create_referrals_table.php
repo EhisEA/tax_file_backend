@@ -13,9 +13,9 @@ return new class extends Migration
     {
         Schema::create('referrals', function (Blueprint $table) {
             $table->id();
-            $table->foreignId("referrer_id")->constrained("users");
-            $table->foreignId("referree_id")->constrained("users");
-            $table->timestamp("tax_filed_at")->nullable();
+            $table->foreignId('referrer_id')->constrained('users');
+            $table->foreignId('referree_id')->constrained('users');
+            $table->timestamp('tax_filed_at')->nullable();
             $table->timestamps();
         });
     }

@@ -19,7 +19,6 @@ class UserProfileController extends Controller
 {
     /**
      * Create user profile
-     *
      */
     public function store(
         CreateUserProfileRequest $request
@@ -29,14 +28,13 @@ class UserProfileController extends Controller
         $data = $request->validated();
 
         $user->profile()->update($data);
-        $user->assignRole("user");
+        $user->assignRole('user');
 
         return new UserResource($user);
     }
 
     /**
      * Update user profile
-     *
      */
     public function update(
         UpdateUserProfileRequest $request
@@ -48,15 +46,15 @@ class UserProfileController extends Controller
         DB::transaction(function () use ($user, $data) {
             // update payload should only include non-null data and should not include the password
             $updatePayload = collect($data)
-                ->except("password")
+                ->except('password')
                 ->filter(function ($value, $key) {
-                    return !is_null($value);
+                    return ! is_null($value);
                 });
 
             $user->profile()->update($updatePayload->toArray());
 
-            if (isset($data["password"])) {
-                $user->update(["password" => Hash::make($data["password"])]);
+            if (isset($data['password'])) {
+                $user->update(['password' => Hash::make($data['password'])]);
             }
         });
 

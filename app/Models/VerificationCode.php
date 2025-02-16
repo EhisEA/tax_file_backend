@@ -5,8 +5,6 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * 
- *
  * @property int $id
  * @property string $code
  * @property string|null $used_at
@@ -14,6 +12,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property int $user_id
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ *
  * @method static \Illuminate\Database\Eloquent\Builder<static>|VerificationCode newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|VerificationCode newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|VerificationCode query()
@@ -24,6 +23,7 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|VerificationCode whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|VerificationCode whereUsedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|VerificationCode whereUserId($value)
+ *
  * @mixin \Eloquent
  */
 class VerificationCode extends Model
@@ -33,6 +33,6 @@ class VerificationCode extends Model
         'code',
         'used_at',
         'expires_at',
-        'user_id'
+        'user_id',
     ];
 }

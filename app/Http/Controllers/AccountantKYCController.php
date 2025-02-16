@@ -8,13 +8,11 @@ use App\Http\Requests\CreateAccountantKYCRequest;
 use App\Http\Resources\UserResource;
 use App\Models\AccountantInformation;
 use App\Models\User;
-use Cloudinary\Api\Exception\ApiError;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 
 /**
  * Accountant Profile
- *
  */
 class AccountantKYCController extends Controller
 {
@@ -36,7 +34,7 @@ class AccountantKYCController extends Controller
 
         // filter out all file inputs
         $none_file_data = collect($data)->filter(function ($value, $key) use ($request) {
-            return !$request->hasFile($key);
+            return ! $request->hasFile($key);
         });
 
         $kyc->update($none_file_data->toArray());

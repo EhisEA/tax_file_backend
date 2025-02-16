@@ -17,7 +17,7 @@ class FileResource extends JsonResource
         return [
             'id' => $this['id'],
             'file_name' => $this['file_name'],
-            'file_url' =>  $this['file_url'],
+            'file_url' => $this['file_url'],
             'file_size' => $this['file_size'],
         ];
     }

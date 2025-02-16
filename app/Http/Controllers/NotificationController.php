@@ -11,7 +11,6 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Notifications\DatabaseNotification;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
 
 class NotificationController extends Controller
 {
@@ -20,12 +19,12 @@ class NotificationController extends Controller
         /* @var User $user */
         $user = Auth::user();
 
-        switch ($request->string("status")) {
-            case "read":
+        switch ($request->string('status')) {
+            case 'read':
                 return new UserNotificationCollection(
                     $user->readNotifications()->paginate()
                 );
-            case "unread":
+            case 'unread':
                 return new UserNotificationCollection(
                     $user->unreadNotifications()->paginate()
                 );
@@ -48,7 +47,7 @@ class NotificationController extends Controller
             return new UserNotificationResource($notification->refresh());
         }
 
-        return response()->json(["message" => "Notification not found"], 404);
+        return response()->json(['message' => 'Notification not found'], 404);
     }
 
     public function markAllAsRead(): JsonResponse
@@ -59,7 +58,7 @@ class NotificationController extends Controller
         $user->unreadNotifications->markAsRead();
 
         return response()->json([
-            "message" => "All notifications marked as read",
+            'message' => 'All notifications marked as read',
         ]);
     }
 
@@ -72,11 +71,11 @@ class NotificationController extends Controller
             $notification->markAsRead();
 
             return response()->json([
-                "message" => "Notification marked as read",
+                'message' => 'Notification marked as read',
             ]);
         }
 
-        return response()->json(["message" => "Notification not found"], 404);
+        return response()->json(['message' => 'Notification not found'], 404);
     }
 
     public function delete(Request $request): JsonResponse
@@ -84,18 +83,19 @@ class NotificationController extends Controller
         /* @var User $user */
         $user = Auth::user();
 
-        $notification_ids = $request->array("notifications");
+        $notification_ids = $request->array('notifications');
 
         $errors = collect();
         $notifications = collect();
 
         foreach ($notification_ids as $notification_id) {
             $notification = $user->notifications->first(
-                fn($notification) => $notification->id === $notification_id
+                fn ($notification) => $notification->id === $notification_id
             );
 
             if ($notification === null) {
                 $errors->push($notification_id);
+
                 continue;
             }
 
@@ -105,19 +105,19 @@ class NotificationController extends Controller
         if ($errors->isNotEmpty()) {
             return response()->json(
                 [
-                    "message" => "The following notifications are not found",
-                    "errors" => $errors->toArray(),
+                    'message' => 'The following notifications are not found',
+                    'errors' => $errors->toArray(),
                 ],
                 404
             );
         }
 
         $rows = DatabaseNotification::query()
-            ->whereIn("id", $notifications->toArray())
+            ->whereIn('id', $notifications->toArray())
             ->delete();
 
         return response()->json([
-            "message" => "Deleted {$rows} Notification(s)",
+            'message' => "Deleted {$rows} Notification(s)",
         ]);
     }
 }

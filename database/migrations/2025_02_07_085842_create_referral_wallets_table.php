@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('referral_wallets', function (Blueprint $table) {
             $table->id();
-            $table->foreignId("user_id")->constrained("users");
+            $table->foreignId('user_id')->constrained('users');
             $table->float('amount', 10, 2);
             $table->timestamps();
         });

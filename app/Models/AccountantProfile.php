@@ -3,13 +3,10 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 
 /**
- * 
- *
  * @property int $id
  * @property int $user_id
  * @property string|null $approved_at
@@ -17,6 +14,7 @@ use Illuminate\Database\Eloquent\Relations\MorphOne;
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \App\Models\AccountantInformation|null $kyc
  * @property-read \App\Models\User|null $user
+ *
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AccountantProfile newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AccountantProfile newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AccountantProfile query()
@@ -25,6 +23,7 @@ use Illuminate\Database\Eloquent\Relations\MorphOne;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AccountantProfile whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AccountantProfile whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|AccountantProfile whereUserId($value)
+ *
  * @mixin \Eloquent
  */
 class AccountantProfile extends Model

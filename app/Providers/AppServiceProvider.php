@@ -25,13 +25,13 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(UrlGenerator $generator): void
     {
-        if (env("APP_ENV") == "production") {
-            $generator->forceScheme("https");
+        if (env('APP_ENV') == 'production') {
+            $generator->forceScheme('https');
         }
 
-        Route::model("notification", DatabaseNotification::class);
+        Route::model('notification', DatabaseNotification::class);
 
-        if (env("APP_ENV") !== "production") {
+        if (env('APP_ENV') !== 'production') {
             DB::listen(function (QueryExecuted $query) {
                 // Log::info("[Query] {$query->toRawSql()} took {$query->time}ms");
             });

@@ -8,10 +8,10 @@ use SoloTerm\Solo\Themes as Themes;
 
 // Solo may not (should not!) exist in prod, so we have to
 // check here first to see if it's installed.
-if (!class_exists("\SoloTerm\Solo\Manager")) {
+if (! class_exists("\SoloTerm\Solo\Manager")) {
     return [
-            //
-        ];
+        //
+    ];
 }
 
 return [
@@ -20,11 +20,11 @@ return [
     | Themes
     |--------------------------------------------------------------------------
     */
-    "theme" => env("SOLO_THEME", "dark"),
+    'theme' => env('SOLO_THEME', 'dark'),
 
-    "themes" => [
-        "light" => Themes\LightTheme::class,
-        "dark" => Themes\DarkTheme::class,
+    'themes' => [
+        'light' => Themes\LightTheme::class,
+        'dark' => Themes\DarkTheme::class,
     ],
 
     /*
@@ -32,11 +32,11 @@ return [
     | Keybindings
     |--------------------------------------------------------------------------
     */
-    "keybinding" => env("SOLO_KEYBINDING", "default"),
+    'keybinding' => env('SOLO_KEYBINDING', 'default'),
 
-    "keybindings" => [
-        "default" => Hotkeys\DefaultHotkeys::class,
-        "vim" => Hotkeys\VimHotkeys::class,
+    'keybindings' => [
+        'default' => Hotkeys\DefaultHotkeys::class,
+        'vim' => Hotkeys\VimHotkeys::class,
     ],
 
     /*
@@ -45,21 +45,21 @@ return [
     |--------------------------------------------------------------------------
     |
     */
-    "commands" => [
+    'commands' => [
         // 'About' => 'php artisan solo:about',
-        "Logs" => EnhancedTailCommand::file(storage_path("logs/laravel.log")),
-        "Make" => new MakeCommand(),
-        "HTTP" => "php artisan serve",
-        "Mailpit" => "mailpit -v",
+        'Logs' => EnhancedTailCommand::file(storage_path('logs/laravel.log')),
+        'Make' => new MakeCommand,
+        'HTTP' => 'php artisan serve',
+        'Mailpit' => 'mailpit -v',
         // "Vite" => "npm run dev",
 
         // Lazy commands do no automatically start when Solo starts.
-        "Queue" => Command::from("php artisan queue:work")->lazy(),
-        "Dumps" => Command::from("php artisan solo:dumps")->lazy(),
-        "Reverb" => Command::from("php artisan reverb")->lazy(),
+        'Queue' => Command::from('php artisan queue:work')->lazy(),
+        'Dumps' => Command::from('php artisan solo:dumps')->lazy(),
+        'Reverb' => Command::from('php artisan reverb')->lazy(),
         // "mailpit" => Command::from("mailpit -v")->lazy(),
-        "Pint" => Command::from("./vendor/bin/pint --ansi")->lazy(),
-        "Tests" => Command::from("php artisan test --colors=always")->lazy(),
+        'Pint' => Command::from('./vendor/bin/pint --ansi')->lazy(),
+        'Tests' => Command::from('php artisan test --colors=always')->lazy(),
     ],
 
     /*
@@ -73,5 +73,5 @@ return [
      * the dumps. This is the address. You probably don't need to change
      * this unless the default is already taken for some reason.
      */
-    "dump_server_host" => env("SOLO_DUMP_SERVER_HOST", "tcp://127.0.0.1:9984"),
+    'dump_server_host' => env('SOLO_DUMP_SERVER_HOST', 'tcp://127.0.0.1:9984'),
 ];

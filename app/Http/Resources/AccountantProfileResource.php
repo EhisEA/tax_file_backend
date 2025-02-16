@@ -17,7 +17,7 @@ class AccountantProfileResource extends JsonResource
         return [
             'is_approved' => $this['approved_at'] !== null,
             'approved_at' => $this['approved_at'],
-            'kyc' => new AccountantInformationResource($this->whenLoaded('kyc'))
+            'kyc' => new AccountantInformationResource($this->whenLoaded('kyc')),
         ];
     }
 }
